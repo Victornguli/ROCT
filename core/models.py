@@ -7,6 +7,9 @@ class RO(models.Model):
     class Meta:
         verbose_name = "Regional Office"
 
+    def __str__(self):
+        return self.name
+
 
 class CO(models.Model):
     name = models.CharField(max_length=100, verbose_name="Country Office Name")
@@ -15,6 +18,9 @@ class CO(models.Model):
         verbose_name = "Country Office"
         verbose_name_plural = "Country Offices"
 
+    def __str__(self):
+        return self.name
+
 
 class BU(models.Model):
     name = models.CharField(max_length=100, verbose_name="Unit name")
@@ -22,12 +28,18 @@ class BU(models.Model):
     class Meta:
         verbose_name = "Business Unit"
 
+    def __str__(self):
+        return self.name
+
 
 class Section(models.Model):
     name = models.CharField(max_length=100, verbose_name="Section name")
-
+    template = models.ManyToManyField("Template", verbose_name="template")
     class Meta:
         verbose_name = "Section"
+
+    def __str__(self):
+        return self.name
 
 
 class Area(models.Model):
@@ -44,9 +56,13 @@ class Area(models.Model):
     comment = models.CharField(max_length=500, verbose_name="Management Comment")
     implementation_date = models.DateField(auto_now_add=False, verbose_name="Target Implementation Date")
     section = models.ForeignKey("Section", verbose_name="Section", on_delete=models.CASCADE)
+    template = models.ManyToManyField("Template", verbose_name="Oversight Mission")
 
     class Meta:
         verbose_name = "Area"
+
+    def __str__(self):
+        return self.area_name
 
 
 class Template(models.Model):
@@ -54,8 +70,18 @@ class Template(models.Model):
     regional_office = models.ForeignKey("RO", verbose_name="Regional Office", on_delete=models.CASCADE)
     country_office = models.ForeignKey("CO", verbose_name="Country Office", on_delete=models.CASCADE)
     business_unit = models.ForeignKey("BU", verbose_name="Business Unit", on_delete=models.CASCADE)
-    sections = models.ManyToManyField("Section")
-    areas = models.ManyToManyField("Area")
 
     class Meta:
         verbose_name = "Template"
+
+    def __str__(self):
+        return self.name
+
+# class OversightMission(models.Model):
+#     name = models.CharField(max_length=100, verbose_name="Mission Name")
+#     template = models.ForeignKey("Template", verbose_name="Oversight Mission", on_delete=models.CASCADE)
+#     #Add User relationship
+
+#     def __str__(self):
+#         return self.name
+    
