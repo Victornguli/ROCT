@@ -9,79 +9,111 @@ Filter Templates
 {% endblock %}
 
 {% block content %}
-    <div class="container-fluid">
-            <div class="card m-auto">
-                    <div class="card-header">
-                        <div class="row">
-                          <div class="col-md-4"></div>
-                          <div class="col-md-4">
-                              <a class="card-link" style="color: black" data-toggle="collapse" href="#collapseOne">
-                                  <h4 style="margin-top: 0" class="btn btn-block btn-secondary">Filter Templates</h4>
-                              </a>
-                          </div>
-                          <div class="col-md-4"></div>
-                        </div>
-                      </div>
-                      
-                    <form method="get">
-                        <div class="bg-light p-3 collapse hide" id="collapseOne"> 
-                            <div class="row">
-                                <div class="form-group col-sm-4 col-md-3">
-                                    {{ templates.form.name.label_tag }}
-                                    {% render_field templates.form.name class="form-control" %}
-                                </div>
-                                <div class="form-group col-sm-4 col-md-3">
-                                    {{ templates.form.regional_office.label_tag }}
-                                    {% render_field templates.form.regional_office class="form-control" %}
-                                </div>
-
-                                <div class="form-group col-sm-4 col-md-3">
-                                    {{ templates.form.country_office.label_tag }}
-                                    {% render_field templates.form.country_office class="form-control" %}
-                                </div>
-
-                                <div class="form-group col-sm-4 col-md-3">
-                                    {{ templates.form.business_unit.label_tag }}
-                                    {% render_field templates.form.business_unit class="form-control" %}
-                                </div>
-
-                            </div>
-                            <button type="submit" class="btn btn-block btn-primary">
-                                <span class="glyphicon glyphicon-search"></span> Search
-                            </button>
-                        </div>
-                    </form>
+<div class="container-fluid">
+    <div class="card m-auto">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <button class="btn btn-info w-100" data-toggle="collapse" data-target="#addForm">Define new template</button>
+                </div>
+                <div class="col-md-4"></div>
+                <hr>
             </div>
+        </div>
 
-            <div class="card">
-                <div class="card-header"></div>
-                <div class="card-body">
-                    <table id="template" class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Template Name</th>
-                                <th>Regional Office</th>
-                                <th>Country Office</th>
-                                <th>Business Unit</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for template in templates.qs %}
-                            <tr>
-                                <td>{{ template.name }}</td>
-                                <td>{{ template.regional_office }}</td>
-                                <td>{{ template.country_office }}</td>
-                                <td>{{ template.business_unit }}</td>
-                                <td>
-                                    <a href="{% url "load_template" template.id %}"><button class="btn btn-outline-primary btn-sm">Load template</button>
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </{{>
+        <form action="{% url "define" %}" method="POST" id="addForm" class="collapse text-left p-3">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4 form-group">
+                    {{ form.regional_office.label_tag }}
+                    {% render_field form.regional_office class="form-control" %}
+                </div>
+                <div class="col-md-4 form-group">
+                    {{ form.country_office.label_tag }}
+                    {% render_field form.country_office class="form-control" %}
+                </div>
+                <div class="col-md-4 form-group">
+                    {{ form.business_unit.label_tag }}
+                    {% render_field form.business_unit class="form-control" %}
+                </div>
+                <div class="col-md-4 form-group">
+                    {{ form.template_name.label_tag }}
+                    {% render_field form.template_name class="form-control" %}
+                </div>
+            </div>
+            <button class="btn btn-outline-primary btn-block" type="submit">Submit</button>
+        </form>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <a class="card-link" style="color: black" data-toggle="collapse" href="#collapseOne">
+                        <h4 style="margin-top: 0" class="btn btn-block btn-secondary">Filter Templates</h4>
+                    </a>
+                </div>
+                <div class="col-md-4"></div>
+            </div>
+            <form method="get">
+                <div class="bg-light p-3 collapse hide" id="collapseOne">
+                    <div class="row">
+                        <div class="form-group col-sm-4 col-md-3">
+                            {{ templates.form.template_name.label_tag }}
+                            {% render_field templates.form.template_name class="form-control" %}
+                        </div>
+                        <div class="form-group col-sm-4 col-md-3">
+                            {{ templates.form.regional_office.label_tag }}
+                            {% render_field templates.form.regional_office class="form-control" %}
+                        </div>
+
+                        <div class="form-group col-sm-4 col-md-3">
+                            {{ templates.form.country_office.label_tag }}
+                            {% render_field templates.form.country_office class="form-control" %}
+                        </div>
+
+                        <div class="form-group col-sm-4 col-md-3">
+                            {{ templates.form.business_unit.label_tag }}
+                            {% render_field templates.form.business_unit class="form-control" %}
+                        </div>
+
+                    </div>
+                    <button type="submit" class="btn btn-block btn-primary">
+                        <span class="glyphicon glyphicon-search"></span> Search
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="card-body">
+            <table id="template" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Template Name</th>
+                        <th>Regional Office</th>
+                        <th>Country Office</th>
+                        <th>Business Unit</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for template in templates.qs %}
+                    <tr>
+                        <td>{{ template.template_name }}</td>
+                        <td>{{ template.regional_office }}</td>
+                        <td>{{ template.country_office }}</td>
+                        <td>{{ template.business_unit }}</td>
+                        <td>
+                            <a href="{% url "load_template" template.id %}"><button
+                                    class="btn btn-outline-primary btn-sm">Load template</button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </{{>
             </div>
     </div>
 

@@ -2,44 +2,44 @@ from django.db import models
 
 # Create your models here.
 class RO(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Regional office name")
+    ro_name = models.CharField(max_length=100, verbose_name="Regional office name")
 
     class Meta:
         verbose_name = "Regional Office"
 
     def __str__(self):
-        return self.name
+        return self.ro_name
 
 
 class CO(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Country Office Name")
+    co_name = models.CharField(max_length=100, verbose_name="Country Office Name")
 
     class Meta:
         verbose_name = "Country Office"
         verbose_name_plural = "Country Offices"
 
     def __str__(self):
-        return self.name
+        return self.co_name
 
 
 class BU(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Unit name")
+    bu_name = models.CharField(max_length=100, verbose_name="Unit name")
 
     class Meta:
         verbose_name = "Business Unit"
 
     def __str__(self):
-        return self.name
+        return self.bu_name
 
 
 class Section(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Section name")
+    section_name = models.CharField(max_length=100, verbose_name="Section name")
     template = models.ManyToManyField("Template", verbose_name="template")
     class Meta:
         verbose_name = "Section"
 
     def __str__(self):
-        return self.name
+        return self.section_name
 
 
 class Area(models.Model):
@@ -66,7 +66,7 @@ class Area(models.Model):
 
 
 class Template(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Template Name")
+    template_name = models.CharField(max_length=100, verbose_name="Template Name")
     regional_office = models.ForeignKey("RO", verbose_name="Regional Office", on_delete=models.CASCADE)
     country_office = models.ForeignKey("CO", verbose_name="Country Office", on_delete=models.CASCADE)
     business_unit = models.ForeignKey("BU", verbose_name="Business Unit", on_delete=models.CASCADE)
@@ -75,7 +75,7 @@ class Template(models.Model):
         verbose_name = "Template"
 
     def __str__(self):
-        return self.name
+        return self.template_name
 
 # class OversightMission(models.Model):
 #     name = models.CharField(max_length=100, verbose_name="Mission Name")

@@ -1,0 +1,134 @@
+{% extends "core/base.html" %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% load static %}
+
+
+{% block title %}
+Filter Templates
+{% endblock %}
+
+{% block content %}
+<style>
+    table {
+    empty-cells: hide;
+    }
+</style>
+<div class="container">
+    <div class="card mt-3 mb-4">
+        <div class="card-header text-info">Template Title: {{ template.template_name }}</div>
+        <div class="card-body">
+            <table id="{{ template.id }}" data-order="[]" class="display">
+                <thead>
+                    <tr>
+                        <th>Area</th>
+                        <th>Expected Controls</th>
+                        <th>Findings</th>
+                        <th>Risk Severity</th>
+                        <th>Recommendations</th>
+                        <th>Management Comment</th>
+                        <th>Target Implementation Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for section in sections %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="alert alert-info mb-1 " style="padding: 5px !important">{{ section.section_name }}
+                            </div>
+                            <div class="text-center mb-3 mt-0">
+                            <button class="btn btn-outline-primary btn-sm" data-toggle="collapse" data-target="#form-{{ section.id }}">Add Area</button>
+                            </div>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <!-- Add existing Areas here -->
+                        {% for area in areas %}
+                        {% if area.section == section %}
+                        <td>{{ area.area_name }}</td>
+                        <td>{{ area.expected_controls }}</td>
+                        <td>{{ area.findings }}</td>
+                        <td>{{ area.risk }}</td>
+                        <td>{{ area.recommendation }}</td>
+                        <td>{{ area.comment }}</td>
+                        <td>{{ area.implementation_date }}</td>
+                        {% endif %}
+                        {% endfor %}
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="7" class="text-center" valign = "top" style="left: 0">
+                            <form id="form-{{ section.id }}" action="{% url "start" %}" method="POST" class="collapse hide">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <input type="text" value="{{ template.id }}" hidden>
+                                    {% for field in area_form %}
+                                    <div class="form-group col-md-4">
+                                        {{ field|as_crispy_field }}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </form>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="7" class="text-center p-2">
+                            <button class="btn btn-warning btn-block" data-toggle="collapse"
+                                data-target="#add-section-{{ template.id }}">Add Section</button>
+                            <form id="add-section-{{ template.id }}" action="{% url "edit_template" template.id %}" method="POST" class="collapse text-left">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <input type="text" value="{{ template.id }}" hidden>
+                                    {% for field in section_form %}
+                                    <div class="form-group col-md-4">
+                                        {{ field|as_crispy_field }}
+                                    </div>
+                                    {% endfor %}
+                                    <div class="form-group col-md-4">
+                                    </div>
+                                </div>
+                                <button class="btn btn-outline-primary">Add Section</button>
+
+                            </form>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="{% static "core/js/jquery.min.js" %}"></script>
+<script src="{% static "core/js/bootstrap.min.js" %}"></script>
+<script src="{% static "core/js/datatables.min.js" %}"></script>
+<script src="{% static "core/data-tables/js/dataTables.bootstrap4.min.js" %}"></script>
+<script>
+    $(document).ready(function () {
+        $('#{{ template.id }}').DataTable();
+    });
+</script>
+{% endblock %}
