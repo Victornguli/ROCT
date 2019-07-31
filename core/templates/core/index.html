@@ -15,14 +15,14 @@ Filter Templates
             <div class="row">
                 <div class="col-md-4"></div>
                 <div class="col-md-4">
-                    <button class="btn btn-info w-100" data-toggle="collapse" data-target="#addForm">Define new template</button>
+                    <button class="btn btn-info w-100" data-toggle="collapse" data-target="#addForm">Create New Oversight Report</button>
                 </div>
                 <div class="col-md-4"></div>
                 <hr>
             </div>
         </div>
 
-        <form action="{% url "define" %}" method="POST" id="addForm" class="collapse text-left p-3">
+        <form action="{% url "define_report" %}" method="POST" id="addForm" class="collapse text-left p-3">
             {% csrf_token %}
             <div class="row">
                 <div class="col-md-4 form-group">
@@ -38,8 +38,8 @@ Filter Templates
                     {% render_field form.business_unit class="form-control" %}
                 </div>
                 <div class="col-md-4 form-group">
-                    {{ form.template_name.label_tag }}
-                    {% render_field form.template_name class="form-control" %}
+                    {{ form.oversight_report_name.label_tag }}
+                    {% render_field form.oversight_report_name class="form-control" %}
                 </div>
             </div>
             <button class="btn btn-outline-primary btn-block" type="submit">Submit</button>

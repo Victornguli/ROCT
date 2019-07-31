@@ -15,13 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core.views import filterTemplates, loadTemplate, editTemplate, defineTemplate
+from core.views import filterTemplates, loadTemplate, editOversightReport, defineOversightReport
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', filterTemplates ,name="filter_templates"),
     path('load/<int:template_id>', loadTemplate ,name="load_template"),
     path('start', loadTemplate ,name="start"),
-    path('define', defineTemplate ,name="define"),
-    path('edit/<int:template_id>', editTemplate ,name="edit_template"),
+    path('define', defineOversightReport ,name="define_report"),
+    path('edit/<int:oversight_report_id>', editOversightReport ,name="edit_report"),
 ]
