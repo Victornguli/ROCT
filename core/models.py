@@ -34,7 +34,9 @@ class BU(models.Model):
 
 class Section(models.Model):
     section_name = models.CharField(max_length=100, verbose_name="Section name")
-    template = models.ManyToManyField("Template", verbose_name="template")
+    # template = models.ManyToManyField("Template", verbose_name="template")
+    # oversight = models.ManyToManyField("OversightReport", verbose_name="OVersight Report", null=True)
+
     class Meta:
         verbose_name = "Section"
 
@@ -56,7 +58,8 @@ class Area(models.Model):
     comment = models.CharField(max_length=500, verbose_name="Management Comment", null=True)
     implementation_date = models.DateField(auto_now_add=False, verbose_name="Target Implementation Date", null=True)
     section = models.ForeignKey("Section", verbose_name="Section", on_delete=models.CASCADE, null=True)
-    template = models.ManyToManyField("Template", verbose_name="Oversight Mission",null=True)
+    # template = models.ManyToManyField("Template", verbose_name="Template",null=True)
+    # oversight = models.ManyToManyField("OversightReport", verbose_name="OVersight Report", null=True)
 
     class Meta:
         verbose_name = "Area"
@@ -66,10 +69,8 @@ class Area(models.Model):
 
 
 class Template(models.Model):
-    template_name = models.CharField(max_length=100, verbose_name="Template Name")
-    regional_office = models.ForeignKey("RO", verbose_name="Regional Office", on_delete=models.CASCADE)
-    country_office = models.ForeignKey("CO", verbose_name="Country Office", on_delete=models.CASCADE)
-    business_unit = models.ForeignKey("BU", verbose_name="Business Unit", on_delete=models.CASCADE)
+    template_name = models.CharField(max_length=100, verbose_name="Template Title")
+    oversight_report = models.ForeignKey("")
 
     class Meta:
         verbose_name = "Template"
@@ -77,11 +78,19 @@ class Template(models.Model):
     def __str__(self):
         return self.template_name
 
-# class OversightMission(models.Model):
-#     name = models.CharField(max_length=100, verbose_name="Mission Name")
-#     template = models.ForeignKey("Template", verbose_name="Oversight Mission", on_delete=models.CASCADE)
-#     #Add User relationship
 
-#     def __str__(self):
-#         return self.name
+class OversightReport(models.Model):
+    oversight_report_name = models.CharField(max_length=100, verbose_name="Oversight Report Title")
+    regional_office = models.ForeignKey("RO", verbose_name="Regional Office", on_delete=models.CASCADE)
+    country_office = models.ForeignKey("CO", verbose_name="Country Office", on_delete=models.CASCADE)
+    business_unit = models.ForeignKey("BU", verbose_name="Business Unit", on_delete=models.CASCADE)
+    areas = models.ManyToManyField("Area", verbose_name="Areas")
+    sections = models.ManyToManyField("Section", verbose_name="Sections")
+    #Add User relationship
+    
+    class Meta:
+        verbose_name = "Oversight Report"
+
+    def __str__(self):
+        return self.oversight_report_name
     
