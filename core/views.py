@@ -58,7 +58,7 @@ def editTemplate(request, template_id):
     area_form = AddAreaForm
     template = Template.objects.get(pk=template_id)
     sections = Section.objects.filter(template__id = template_id)
-    areas = Area.objects.filter(template__id = template_id)
+    areas = Area.objects.all()
     context = {
         "section_form":section_form,
         "area_form":area_form,
@@ -67,13 +67,13 @@ def editTemplate(request, template_id):
         "areas":areas,
     }
 
-    print (context)
     if request.method == "POST":
         section_form = AddSectionForm(request.POST)
         area_form = AddAreaForm(request.POST)
 
         #Handle Add Sections
         if section_form.is_valid():
+            print("Request _section")
             section_name = section_form.cleaned_data.get("section_name")
             section = Section.objects.create(section_name = section_name)
             section.template.add(template) #many to many rel-ship
@@ -81,10 +81,18 @@ def editTemplate(request, template_id):
             return redirect("edit_template", template_id=template.id)
         else:
             section_form = AddSectionForm
+
+        # Handle Add Areas...
+        if area_form.is_valid():
+            area_name = area_form.cleaned_data.get("area_name")
+            expected_controls = area_form.cleaned_data.get("expected_controls")
+            print(request.POST.copy()["section_id"])
+            section = Section.objects.get(pk=request.POST.copy()["section_id"])
+            area = Area.objects.create(area_name = area_name, expected_controls = expected_controls, section=section)
+            print(area)
+
             return redirect("edit_template", template_id=template.id)
 
-        #Handle Add Areas...
-        # if area_form.is_valid():
-        #     area_name = area_form.cleaned_data.get("area_name")
+
     else:
         return render(request, "core/edit_template.html", context)

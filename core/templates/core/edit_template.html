@@ -18,11 +18,11 @@ Filter Templates
     <div class="card mt-3 mb-4">
         <div class="card-header text-info">Template Title: {{ template.template_name }}</div>
         <div class="card-body">
-            <table id="{{ template.id }}" data-order="[]" class="display">
+            <table id="{{ template.id }}" data-order="[]" class="display bordered" >
                 <thead>
                     <tr>
-                        <th>Area</th>
-                        <th>Expected Controls</th>
+                        <th>Area   </th>
+                        <th> Expected Controls</th>
                         <th>Findings</th>
                         <th>Risk Severity</th>
                         <th>Recommendations</th>
@@ -47,10 +47,9 @@ Filter Templates
                         <td></td>
                         <td></td>
                     </tr>
-                    <tr>
-                        <!-- Add existing Areas here -->
-                        {% for area in areas %}
+                    {% for area in areas %}
                         {% if area.section == section %}
+                        <tr>
                         <td>{{ area.area_name }}</td>
                         <td>{{ area.expected_controls }}</td>
                         <td>{{ area.findings }}</td>
@@ -58,28 +57,22 @@ Filter Templates
                         <td>{{ area.recommendation }}</td>
                         <td>{{ area.comment }}</td>
                         <td>{{ area.implementation_date }}</td>
-                        {% endif %}
-                        {% endfor %}
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
                     </tr>
+                        {% endif %}
+                    {% endfor %}
                     <tr>
                         <td colspan="7" class="text-center" valign = "top" style="left: 0">
-                            <form id="form-{{ section.id }}" action="{% url "start" %}" method="POST" class="collapse hide">
+                            <form id="form-{{ section.id }}" action="{% url "edit_template" template.id %}" method="POST" class="collapse hide">
                                 {% csrf_token %}
                                 <div class="row">
-                                    <input type="text" value="{{ template.id }}" hidden>
+                                    <input type="text" name="section_id" value="{{ section.id }}" hidden>
                                     {% for field in area_form %}
                                     <div class="form-group col-md-4">
                                         {{ field|as_crispy_field }}
                                     </div>
                                     {% endfor %}
                                 </div>
+                                <button class="btn btn-block btn-primary">Submit</button>
                             </form>
                         </td>
                         <td></td>
@@ -98,6 +91,7 @@ Filter Templates
                                 {% csrf_token %}
                                 <div class="row">
                                     <input type="text" value="{{ template.id }}" hidden>
+                                    <input type="text" value="{{ section.id }}" hidden>
                                     {% for field in section_form %}
                                     <div class="form-group col-md-4">
                                         {{ field|as_crispy_field }}

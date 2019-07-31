@@ -48,15 +48,15 @@ class Area(models.Model):
         ("Medium", "medium"),
         ("Low", "low"),
     )
-    area_name = models.CharField(max_length=100, verbose_name="Area name")
-    expected_controls = models.CharField(max_length=500, verbose_name="Expected Controls")
-    findings = models.CharField(max_length=100, verbose_name="Findings")
-    risk = models.CharField(max_length=50, choices=risk_choices, verbose_name="Risk Severity")
-    recommendation = models.CharField(max_length=500, verbose_name="Recommendation")
-    comment = models.CharField(max_length=500, verbose_name="Management Comment")
-    implementation_date = models.DateField(auto_now_add=False, verbose_name="Target Implementation Date")
-    section = models.ForeignKey("Section", verbose_name="Section", on_delete=models.CASCADE)
-    template = models.ManyToManyField("Template", verbose_name="Oversight Mission")
+    area_name = models.CharField(max_length=100, verbose_name="Area name", null=True)
+    expected_controls = models.CharField(max_length=500, verbose_name="Expected Controls", null=True)
+    findings = models.CharField(max_length=100, verbose_name="Findings", null=True)
+    risk = models.CharField(max_length=50, choices=risk_choices, verbose_name="Risk Severity", null=True)
+    recommendation = models.CharField(max_length=500, verbose_name="Recommendation", null=True)
+    comment = models.CharField(max_length=500, verbose_name="Management Comment", null=True)
+    implementation_date = models.DateField(auto_now_add=False, verbose_name="Target Implementation Date", null=True)
+    section = models.ForeignKey("Section", verbose_name="Section", on_delete=models.CASCADE, null=True)
+    template = models.ManyToManyField("Template", verbose_name="Oversight Mission",null=True)
 
     class Meta:
         verbose_name = "Area"
