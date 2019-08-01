@@ -1,0 +1,42 @@
+body{
+    padding: 0;
+    margin: 0;
+}
+
+.my-nav{
+    background-color: #4287f5 !important;
+}
+
+.comment-wrapper .panel-body {
+    max-height:650px;
+    overflow:auto;
+}
+
+.comment-wrapper .media-list .media img {
+    width:64px;
+    height:64px;
+    border:2px solid #e5e7e8;
+}
+
+.comment-wrapper .media-list .media {
+    border-bottom:1px dashed #efefef;
+    margin-bottom:25px;
+}
+
+.img-circle{
+    border-radius: 50%;
+    margin-right: 20px;
+}
+
+#dark-bg{
+    background-color: whitesmoke !important;
+    border-radius: 5px;
+}
+
+a{
+    text-decoration: none;
+}
+
+a:hover{
+    text-decoration: none !important;
+}

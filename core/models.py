@@ -70,7 +70,13 @@ class Area(models.Model):
 
 class Template(models.Model):
     template_name = models.CharField(max_length=100, verbose_name="Template Title")
-    oversight_report = models.ForeignKey("")
+    oversight_report_name = models.CharField(max_length=100, verbose_name="Oversight Report Title")
+    regional_office = models.ForeignKey("RO", verbose_name="Regional Office", on_delete=models.CASCADE)
+    country_office = models.ForeignKey("CO", verbose_name="Country Office", on_delete=models.CASCADE)
+    business_unit = models.ForeignKey("BU", verbose_name="Business Unit", on_delete=models.CASCADE)
+    areas = models.ManyToManyField("Area", verbose_name="Areas")
+    sections = models.ManyToManyField("Section", verbose_name="Sections")
+    # oversight_report = models.ForeignKey("")
 
     class Meta:
         verbose_name = "Template"
