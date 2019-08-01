@@ -1,0 +1,101 @@
+{% extends "core/base.html" %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}
+Oversight Missions
+{% endblock %}
+
+{% block content %}
+<style>
+    table {
+    empty-cells: hide;
+    }
+</style>
+<div class="container">
+    <div class="card mt-3 mb-4">
+        <div class="card-header"> 
+            <h4><b class="text-info">Oversight Mission Name: {{ oversight.oversight_name }}</b></h4>
+            <div class="">
+                <form action="" class="form-inline">
+                    <br>
+                    <button class="btn btn-outline-dark m-3">Submit Oversight Report</button>
+                </form>
+            </div>
+        </div>
+        <div class="card-body">
+            <table id="{{ template.id }}" data-order="[]" class="display bordered" >
+                <thead>
+                    <tr>
+                        <th>Area </th>
+                        <th>Expected Controls</th>
+                        <th>Findings</th>
+                        <th>Risk Severity</th>
+                        <th>Recommendations</th>
+                        <th>Management Comment</th>
+                        <th>Target Implementation Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for section in sections %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="alert alert-info mb-1 " style="padding: 5px !important">{{ section.section_name }}
+                            </div>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    {% for area in areas %}
+                        {% if area.section == section %}
+                        <tr>
+                        <td>{{ area.area_name }}</td>
+                        <td>{{ area.expected_controls }}</td>
+                        <td>{{ area.findings }}</td>
+                        <td>{{ area.risk }}</td>
+                        <td>{{ area.recommendation }}</td>
+                        <td>{{ area.comment }}</td>
+                        <td>{{ area.implementation_date }}</td>
+                    </tr>
+                        {% endif %}
+                    {% endfor %}
+                    <tr>
+                        <td colspan="7" class="text-center" valign = "top" style="left: 0">
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="{% static "core/js/jquery.min.js" %}"></script>
+<script src="{% static "core/js/bootstrap.min.js" %}"></script>
+<script src="{% static "core/js/datatables.min.js" %}"></script>
+<script src="{% static "core/data-tables/js/dataTables.bootstrap4.min.js" %}"></script>
+<script>
+    $(document).ready(function () {
+        $('#{{  template.id }}').DataTable();
+    });
+</script>
+{% endblock %}
