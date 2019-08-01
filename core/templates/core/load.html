@@ -29,7 +29,7 @@ Filter Templates
                             {% for section in sections %}
                             <tr>
                                 <td colspan="7">
-                                    <div class="alert alert-info" style="padding: 5px !important">{{ section.name }}</div>
+                                    <div class="alert alert-info" style="padding: 5px !important">{{ section.section_name }}</div>
                                 </td>
                             </tr>
                             <tr>
@@ -47,10 +47,9 @@ Filter Templates
                                 {% endfor %}
                             </tr>
                             <tr>
-        
                                 <td colspan="7" class="text-center">
                                     <button class="btn btn-outline-primary btn-sm" data-toggle="collapse" data-target="#form-{{ section.id }}">Add Area</button>
-                                    <form id="form-{{ section.id }}" action="{% url "start" %}" method="POST" class="collapse">
+                                    <form id="form-{{ section.id }}" action="{% url "start" template.id %}" method="POST" class="collapse">
                                         {% csrf_token %}
                                         <div class="row">
                                             <input type="text" value="{{ template.id }}" hidden>

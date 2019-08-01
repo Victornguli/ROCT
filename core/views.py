@@ -27,6 +27,7 @@ def loadTemplate(request, template_id):
         "areas":areas,
         "form":form,
     }
+    print(context["template"])
 
     return render(request, "core/load.html", context)
 
