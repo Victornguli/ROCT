@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 
-from .models import Template, Area, Section, RO, CO, BU, OversightReport
+from .models import Template, Area, Section, RO, CO, BU, Oversight
 from .filters import TemplateFilter
 from .forms import AddAreaForm, AddSectionForm, AddTemplateForm, AddOversightReportForm
 # Create your views here.
@@ -8,7 +8,7 @@ from .forms import AddAreaForm, AddSectionForm, AddTemplateForm, AddOversightRep
 def filterTemplates(request):
     templates = Template.objects.all()
     template_filter = TemplateFilter(request.GET, queryset=templates)
-    form = AddOversightReportForm   
+    form = AddTemplateForm  
 
     context = {
         "templates":template_filter,
@@ -31,39 +31,39 @@ def loadTemplate(request, template_id):
     return render(request, "core/load.html", context)
 
 
-def defineOversightReport(request):
-    form = AddOversightReportForm
+def defineTemplate(request):
+    form = AddTemplateForm
     if request.method == "POST":
-        form = AddOversightReportForm(request.POST)
+        form = AddTemplateForm(request.POST)
         # print(form.errors)
         if form.is_valid():
             regional_office = RO.objects.get(ro_name = form.cleaned_data.get("regional_office"))
             country_office = CO.objects.get(co_name = form.cleaned_data.get("country_office"))
             business_unit = BU.objects.get(bu_name = form.cleaned_data.get("business_unit"))
-            oversight_report_name = form.cleaned_data.get("oversight_report_name")
+            template_name = form.cleaned_data.get("template_name")
             
             #Create new Template
-            oversight_report = OversightReport.objects.create(oversight_report_name=oversight_report_name, regional_office =regional_office, country_office=country_office, business_unit = business_unit)
+            template = Template.objects.create(template_name=template_name, regional_office =regional_office, country_office=country_office, business_unit = business_unit)
             # print (regional_office, country_office, business_unit, template_name)
-            return redirect("edit_report", oversight_report_id = oversight_report.id)
+            return redirect("edit_report", template_id = template.id)
 
         else:
             return redirect("filter_templates")
     return redirect("filter_templates")
 
 
-def editOversightReport(request, oversight_report_id):
+def editTemplate(request, template_id):
     section_form = AddSectionForm
     area_form = AddAreaForm
-    oversight_report = OversightReport.objects.get(pk=oversight_report_id)
-    sections = oversight_report.sections.all()
-    areas = oversight_report.areas.all()
+    template = Template.objects.get(pk=template_id)
+    sections = template.sections.all()
+    areas = template.areas.all()
     context = {
-        "section_form":section_form,
-        "area_form":area_form,
-        "oversight_report":oversight_report,
-        "sections":sections,
-        "areas":areas,
+        "section_form": section_form,
+        "area_form": area_form,
+        "template": template,
+        "sections": sections,
+        "areas": areas,
     }
 
     if request.method == "POST":
@@ -75,9 +75,9 @@ def editOversightReport(request, oversight_report_id):
             print("Request _section")
             section_name = section_form.cleaned_data.get("section_name")
             section = Section.objects.create(section_name = section_name)
-            oversight_report.sections.add(section) #many to many rel-ship
+            template.sections.add(section) #many to many rel-ship
 
-            return redirect("edit_report", oversight_report_id=oversight_report.id)
+            return redirect("edit_report", template_id = template.id)
         else:
             section_form = AddSectionForm
 
@@ -88,16 +88,15 @@ def editOversightReport(request, oversight_report_id):
             print(request.POST.copy()["section_id"])
             section = Section.objects.get(pk=request.POST.copy()["section_id"])
             area = Area.objects.create(area_name = area_name, expected_controls = expected_controls, section=section)
-            oversight_report.areas.add(area)
+            template.areas.add(area)
 
-            return redirect("edit_report", oversight_report_id=oversight_report.id)
-
+            return redirect("edit_report", template_id=template.id)
 
     else:
         return render(request, "core/edit_report.html", context)
 
 
-def saveTemplate(request, oversight_report_id):
-    oversight_report = OversightReport.objects.get(pk=oversight_report_id)
-    template = Template.objects.create(template_name="{} Template".format(oversight_report.oversight_report_name))
+def startOversight(request, template_id):
+    template = OversightReport.objects.get(pk=template_id)
+    oversight = Oversight.objects.create(oversight_name="{} ".format(template.template_name), template=template)
     

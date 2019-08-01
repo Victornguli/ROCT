@@ -70,7 +70,7 @@ class Area(models.Model):
 
 class Template(models.Model):
     template_name = models.CharField(max_length=100, verbose_name="Template Title")
-    oversight_report_name = models.CharField(max_length=100, verbose_name="Oversight Report Title")
+    oversight_name = models.CharField(max_length=100, verbose_name="Oversight Name")
     regional_office = models.ForeignKey("RO", verbose_name="Regional Office", on_delete=models.CASCADE)
     country_office = models.ForeignKey("CO", verbose_name="Country Office", on_delete=models.CASCADE)
     business_unit = models.ForeignKey("BU", verbose_name="Business Unit", on_delete=models.CASCADE)
@@ -85,18 +85,21 @@ class Template(models.Model):
         return self.template_name
 
 
-class OversightReport(models.Model):
-    oversight_report_name = models.CharField(max_length=100, verbose_name="Oversight Report Title")
-    regional_office = models.ForeignKey("RO", verbose_name="Regional Office", on_delete=models.CASCADE)
-    country_office = models.ForeignKey("CO", verbose_name="Country Office", on_delete=models.CASCADE)
-    business_unit = models.ForeignKey("BU", verbose_name="Business Unit", on_delete=models.CASCADE)
-    areas = models.ManyToManyField("Area", verbose_name="Areas")
-    sections = models.ManyToManyField("Section", verbose_name="Sections")
+class Oversight(models.Model):
+    oversight_status = (
+        ("new", "New"),
+        ("ongoing", "Ongoing"),
+        ("follow_up", "Follow Up"),
+        ("closed", "Closed"),
+    )
+    oversight_name = models.CharField(max_length=100, verbose_name="Oversight Name")
+    template = models.ManyToManyField("Template", verbose_name="Template")
+    overisght_checklist_year = models.DateTimeField(auto_now=False, auto_now_add=False, null=True)
     #Add User relationship
     
     class Meta:
-        verbose_name = "Oversight Report"
+        verbose_name = "Oversight"
 
     def __str__(self):
-        return self.oversight_report_name
+        return self.oversight_name
     
