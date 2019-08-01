@@ -23,8 +23,6 @@ class AddTemplateForm(forms.Form):
     business_unit = forms.ModelChoiceField(queryset=BU.objects.all(), widget=forms.Select)
     template_name = forms.CharField(max_length=200, required=True)
 
-class AddOversightReportForm(forms.Form):
-    oversight_report_name = forms.CharField(max_length=200, required=True, widget=forms.TextInput(attrs={'placeholder':'Oversight Report Name'}), help_text="Type in the name of this Oversight Report")
-    regional_office = forms.ModelChoiceField(queryset=RO.objects.all(), widget=forms.Select)
-    country_office = forms.ModelChoiceField(queryset=CO.objects.all(), widget=forms.Select)
-    business_unit = forms.ModelChoiceField(queryset=BU.objects.all(), widget=forms.Select)
+class AddOversightForm(forms.Form):
+    oversight_name = forms.CharField(max_length=200, required=True, widget=forms.TextInput(attrs={'placeholder':'Oversight Name'}), help_text="Type in the name of this Oversight Mission")
+    close_year = forms.DateField(widget=forms.SelectDateWidget())
