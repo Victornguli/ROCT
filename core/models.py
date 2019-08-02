@@ -70,10 +70,6 @@ class Area(models.Model):
 
 class Template(models.Model):
     template_name = models.CharField(max_length=100, verbose_name="Template Title")
-<<<<<<< HEAD
-    oversight_report_name = models.CharField(max_length=100, verbose_name="Oversight Report Title")
-=======
->>>>>>> 51748448e8f67e62a74fd8bd9f163573e1ab882a
     regional_office = models.ForeignKey("RO", verbose_name="Regional Office", on_delete=models.CASCADE)
     country_office = models.ForeignKey("CO", verbose_name="Country Office", on_delete=models.CASCADE)
     business_unit = models.ForeignKey("BU", verbose_name="Business Unit", on_delete=models.CASCADE)
@@ -106,10 +102,9 @@ class Oversight(models.Model):
     areas = models.ManyToManyField("Area", verbose_name="Areas")
     sections = models.ManyToManyField("Section", verbose_name="Sections")
     #Add User relationship
-    
+
     class Meta:
         verbose_name = "Oversight"
 
     def __str__(self):
         return self.oversight_name
-    
