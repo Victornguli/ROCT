@@ -20,9 +20,9 @@ from core.views import filterTemplates, loadTemplate, editTemplate, defineTempla
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', filterTemplates ,name="filter_templates"),
-    path('load/<int:template_id>', loadTemplate ,name="load_template"),
-    path('start/<int:template_id>', startOversight,name="start"),
+    path('load/<int:template_id>',loadTemplate,name="load_template"),
+    path('start/<int:template_id>',startOversight,name="start"),
     path('define', defineTemplate ,name="define_template"),
-    path('edit/<int:template_id>', editTemplate ,name="edit_template"),
-    path('ongoing_oversight/<int:oversight_id>', ongoingOversight ,name="ongoing_oversight"),
+    path('edit/<int:template_id>',editTemplate,name="edit_template"),
+    path('ongoing_oversight/<int:oversight_id>',ongoingOversight,name="ongoing_oversight"),
 ]

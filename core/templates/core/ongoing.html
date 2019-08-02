@@ -25,7 +25,7 @@ Oversight Missions
             </div>
         </div>
         <div class="card-body">
-            <table id="{{ template.id }}" data-order="[]" class="display bordered" >
+            <table id="{{ oversight.id }}" data-order="[]" class="display bordered" >
                 <thead>
                     <tr>
                         <th>Area </th>
@@ -95,7 +95,7 @@ Oversight Missions
 <script src="{% static "core/data-tables/js/dataTables.bootstrap4.min.js" %}"></script>
 <script>
     $(document).ready(function () {
-        $('#{{  template.id }}').DataTable();
+        $('#{{ oversight.id }}').DataTable();
     });
 </script>
 {% endblock %}

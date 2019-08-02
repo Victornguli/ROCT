@@ -2,15 +2,38 @@ from django import forms
 from django.forms import ModelForm
 from .models import RO,CO,BU,Template,Area
 
+
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+
+
 class AddAreaForm(forms.Form):
     area_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'placeholder':'Area Name'}), help_text="Type in the name of the area")
-    expected_controls = forms.CharField(max_length=100, required=True, widget=forms.Textarea(attrs={'placeholder':'Expected Controls',"rows":"2", "cols":"2"}))
+    expected_controls = forms.CharField(max_length=1000, required=True, widget=forms.Textarea(attrs={'placeholder':'Expected Controls',"rows":"3", "cols":"2"}))
     # findings = forms.CharField(max_length=100, required=False, widget=forms.Textarea(attrs={'placeholder':'Findings'}), help_text="Type in the name of the area")
     # risk = forms.ModelChoiceField(required=False, widget=forms.Select(), help_text="Type in the name of the area")
 
     # class Meta:
     #     model = Area
     #     fields = ["risk"]
+
+class addActiveAreasForm(forms.Form):
+    risk_choices = (
+        ("High", "high"),
+        ("Medium", "medium"),
+        ("Low", "low"),
+    )
+    
+    findings = forms.CharField(max_length=1000, required=False, widget=forms.Textarea(attrs={'placeholder':'Findings'}), help_text="Type in the name of the area")
+    risk = forms.ChoiceField(choices=risk_choices, required=False, widget=forms.Select(), help_text="Select Risk")
+    recommendationns = forms.CharField(max_length=1000, required=False, widget=forms.Textarea(attrs={'placeholder':'Recommendations'}), help_text="Enter any recommendations")
+    comment = forms.CharField(max_length=1000, required=False, widget=forms.Textarea(attrs={'placeholder':'Management Comments'}), help_text="Enter Management Comment")
+    implementation_date = forms.DateField(required=False, widget=DateInput())
+
+    class Meta:
+        model = Area
+        fields = ["risk"]
 
 
 class AddSectionForm(forms.Form):
