@@ -3,15 +3,29 @@
 {% load widget_tweaks %}
 {% load static %}
 
-
 {% block title %}
 Filter Templates
 {% endblock %}
 
 {% block content %}
+<style>
+    table {
+    empty-cells: hide;
+    }
+</style>
     <div class="container">
             <div class="card mt-3">
-                <div class="card-header">{{ template.name }}</div>
+                <div class="card-header">
+                    <h4><b class="text-info">Template Title: {{ template.template_name }}</b></h4>  
+                    <form action="{% url "start" template.id %}" class="form-inline" method="get">
+                        <input class="form-check-input" type="checkbox" name="save_template" value="yes" id="is_template">
+                        <label class="form-check-label" for="is_template">
+                        Commit as a template
+                        </label>
+                        <br>
+                        <button type="submit" class="btn btn-outline-dark m-3">Start Oversight Mission</button>
+                    </form>                  
+                </div>
                 <div class="card-body">
                     <table id="{{ template.id }}" data-order="[]" class="table table-bordered" >
                         <thead>
@@ -48,12 +62,12 @@ Filter Templates
                             </tr>
                             <tr>
                                 <td colspan="7" class="text-center">
-                                    <button class="btn btn-outline-primary btn-sm" data-toggle="collapse" data-target="#form-{{ section.id }}">Add Area</button>
+                                    <button class="btn btn-outline-primary btn-sm" data-toggle="collapse" data-target="#form-{{ section.id }}">Edit Area</button>
                                     <form id="form-{{ section.id }}" action="{% url "start" template.id %}" method="POST" class="collapse">
                                         {% csrf_token %}
                                         <div class="row">
                                             <input type="text" value="{{ template.id }}" hidden>
-                                            {% for field in form %}
+                                            {% for field in area_form %}
                                                 <div class="form-group col-md-4">
                                                     {{ field|as_crispy_field }}
                                                 </div>
@@ -63,6 +77,27 @@ Filter Templates
                                 </td>
                             </tr>
                             {% endfor %}
+                            <tr>
+                                <td colspan="7" class="text-center p-2">
+                                    <button class="btn btn-warning btn-block" data-toggle="collapse"
+                                        data-target="#add-section-{{ template.id }}">Add Section</button>
+                                    <form id="add-section-{{ template.id }}" action="{% url "edit_template" template.id %}" method="POST" class="collapse text-left">
+                                        {% csrf_token %}
+                                        <div class="row">
+                                            <input type="text" value="{{  template.id }}" hidden>
+                                            <input type="text" value="{{ section.id }}" hidden>
+                                            {% for field in section_form %}
+                                            <div class="form-group col-md-4">
+                                                {{ field|as_crispy_field }}
+                                            </div>
+                                            {% endfor %}
+                                            <div class="form-group col-md-4">
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-outline-primary">Add Section</button>
+                                    </form>
+                                </td>
+                            </tr>                            
                         </tbody>
                     </table>
                 </div>

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 
 from .models import Template, Area, Section, RO, CO, BU, Oversight
 from .filters import TemplateFilter
-from .forms import AddAreaForm, AddSectionForm, AddTemplateForm, AddOversightForm
+from .forms import AddAreaForm, AddSectionForm, AddTemplateForm, AddOversightForm, addActiveAreasForm
 # Create your views here.
 
 def filterTemplates(request):
@@ -16,16 +16,20 @@ def filterTemplates(request):
     }
     return render(request, "core/index.html", context)
 
+
 def loadTemplate(request, template_id):
     template = Template.objects.get(pk=template_id)
     sections = Section.objects.filter(template__id=template_id)
     areas = Area.objects.filter(template__id=template_id)
-    form = AddTemplateForm()
+    section_form = AddSectionForm()
+    area_form = AddAreaForm()
+    # section_form = AddSectionForm()
     context = {
         "template":template,
         "sections":sections,
         "areas":areas,
-        "form":form,
+        "section_form":section_form,
+        "area_form":area_form,
     }
     print(context["template"])
 
@@ -101,14 +105,14 @@ def editTemplate(request, template_id):
 
 def startOversight(request, template_id):
     template = Template.objects.get(pk=template_id)
-    save_template = request.GET.copy()["save_template"]
-    print(save_template)
-    if save_template == "yes":
-        #Save this template( Already done.. so keep it)
-        pass
-    else:
-        #delete this template
-        pass
+    # save_template = request.GET.copy()["save_template"]
+    # print(save_template)
+    # if save_template == "yes":
+    #     #Save this template( Already done.. so keep it)
+    #     pass
+    # else:
+    #     #delete this template
+    #     pass
 
     ro = template.regional_office
     co = template.country_office
@@ -130,11 +134,15 @@ def ongoingOversight(request, oversight_id):
     template = oversight.template
     sections = template.sections.all()
     areas = template.areas.all()
+
+    #forms
+    area_form = AddAreaForm
     
     context = {
         "oversight": oversight,
         "sections": sections,
         "areas": areas,
+        "area_form": area_form,
     }
 
     return render(request, "core/ongoing.html", context)
