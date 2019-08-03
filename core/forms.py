@@ -18,7 +18,7 @@ class AddAreaForm(forms.Form):
     #     model = Area
     #     fields = ["risk"]
 
-class addActiveAreasForm(forms.Form):
+class EditActiveAreaForm(forms.Form):
     risk_choices = (
         ("High", "high"),
         ("Medium", "medium"),

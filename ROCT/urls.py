@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core.views import filterTemplates, loadTemplate, editTemplate, defineTemplate, startOversight, ongoingOversight
+from core.views import filterTemplates, loadTemplate, editTemplate, defineTemplate, startOversight, ongoingOversight, editOversight
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,5 +24,6 @@ urlpatterns = [
     path('start/<int:template_id>',startOversight,name="start"),
     path('define', defineTemplate ,name="define_template"),
     path('edit/<int:template_id>',editTemplate,name="edit_template"),
-    path('ongoing_oversight/<int:oversight_id>',ongoingOversight,name="ongoing_oversight"),
+    path('oversights/',ongoingOversight,name="oversights"),
+    path('edit-oversight/<int:oversight_id>',editOversight,name="edit_oversight"),
 ]

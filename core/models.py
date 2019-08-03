@@ -91,6 +91,7 @@ class Oversight(models.Model):
         ("follow_up", "Follow Up"),
         ("closed", "Closed"),
     )
+    
     oversight_name = models.CharField(max_length=100, verbose_name="Oversight Name")
     template = models.ForeignKey("Template", verbose_name="Template", null=True, on_delete=models.CASCADE)
     close_year = models.DateTimeField(auto_now=False, auto_now_add=False, null=True, verbose_name="Year")

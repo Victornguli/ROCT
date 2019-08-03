@@ -3,34 +3,29 @@
 {% load widget_tweaks %}
 {% load static %}
 
-
 {% block title %}
-Filter Templates
+Oversight Missions
 {% endblock %}
 
 {% block content %}
 <style>
     table {
-    empty-cells: hide;
+        empty-cells: hide;
     }
 </style>
 <div class="container">
     <div class="card mt-3 mb-4">
-        <div class="card-header"> 
-            <h4><b class="text-info">Template Title: {{ template.template_name }}</b></h4>
+        <div class="card-header">
+            <h4><b class="text-info">Oversight Mission Name: {{ oversight.oversight_name }}</b></h4>
             <div class="">
-                <form action="{% url "start" template.id %}" class="form-inline">
-                    <input class="form-check-input" type="checkbox" name="save_template" value="yes" id="is_template">
-                    <label class="form-check-label" for="is_template">
-                    Commit as a template
-                    </label>
+                <form action="" class="form-inline">
                     <br>
-                    <button class="btn btn-outline-dark m-3">Start Oversight Mission</button>
+                    <button class="btn btn-outline-dark m-3">Submit Oversight Report</button>
                 </form>
             </div>
         </div>
         <div class="card-body">
-            <table id="{{ template.id }}" data-order="[]" class="display bordered" >
+            <table id="{{ oversight.id }}" data-order="[]" class="display table-bordered">
                 <thead>
                     <tr>
                         <th>Area </th>
@@ -46,10 +41,8 @@ Filter Templates
                     {% for section in sections %}
                     <tr>
                         <td colspan="7">
-                            <div class="alert alert-info mb-1 " style="padding: 5px !important">{{ section.section_name }}
-                            </div>
-                            <div class="text-center mb-3 mt-0">
-                            <button class="btn btn-outline-primary btn-sm" data-toggle="collapse" data-target="#form-{{ section.id }}">Add Area</button>
+                            <div class="alert alert-info mb-1 " style="padding: 5px !important">
+                                {{ section.section_name }}
                             </div>
                         </td>
                         <td></td>
@@ -60,8 +53,8 @@ Filter Templates
                         <td></td>
                     </tr>
                     {% for area in areas %}
-                        {% if area.section == section %}
-                        <tr>
+                    {% if area.section == section %}
+                    <tr>
                         <td>{{ area.area_name }}</td>
                         <td>{{ area.expected_controls }}</td>
                         <td>{{ area.findings }}</td>
@@ -70,13 +63,16 @@ Filter Templates
                         <td>{{ area.comment }}</td>
                         <td>{{ area.implementation_date }}</td>
                     </tr>
-                        {% endif %}
-                    {% endfor %}
+
                     <tr>
-                        <td colspan="7" class="text-center" valign = "top" style="left: 0">
-                            <form id="form-{{ section.id }}" action="{% url "edit_template" template.id %}" method="POST" class="collapse hide">
+                        <td colspan="7" class="text-left">
+                            <button class="btn btn-outline-primary btn-sm" data-toggle="collapse"
+                                data-target="#form-{{ area.id }}">Edit Area</button>
+                            <form id="form-{{ area.id }}" action="{% url "edit_oversight" oversight.id %}" method="POST"
+                                class="collapse">
                                 {% csrf_token %}
                                 <div class="row">
+                                    <input type="text" name="area_id" value="{{ area.id }}" hidden>
                                     <input type="text" name="section_id" value="{{ section.id }}" hidden>
                                     {% for field in area_form %}
                                     <div class="form-group col-md-4">
@@ -84,7 +80,8 @@ Filter Templates
                                     </div>
                                     {% endfor %}
                                 </div>
-                                <button class="btn btn-block btn-primary">Submit</button>
+                                <button class="btn btn-info">Update</button>
+
                             </form>
                         </td>
                         <td></td>
@@ -94,28 +91,12 @@ Filter Templates
                         <td></td>
                         <td></td>
                     </tr>
+                    {% endif %}
+                    {% endfor %}
+
                     {% endfor %}
                     <tr>
-                        <td colspan="7" class="text-center p-2">
-                            <button class="btn btn-warning btn-block" data-toggle="collapse"
-                                data-target="#add-section-{{ template.id }}">Add Section</button>
-                            <form id="add-section-{{ template.id }}" action="{% url "edit_template" template.id %}" method="POST" class="collapse text-left">
-                                {% csrf_token %}
-                                <div class="row">
-                                    <input type="text" value="{{  template.id }}" hidden>
-                                    <input type="text" value="{{ section.id }}" hidden>
-                                    {% for field in section_form %}
-                                    <div class="form-group col-md-4">
-                                        {{ field|as_crispy_field }}
-                                    </div>
-                                    {% endfor %}
-                                    <div class="form-group col-md-4">
-                                    </div>
-                                </div>
-                                <button class="btn btn-outline-primary">Add Section</button>
-
-                            </form>
-                        </td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -134,7 +115,7 @@ Filter Templates
 <script src="{% static "core/data-tables/js/dataTables.bootstrap4.min.js" %}"></script>
 <script>
     $(document).ready(function () {
-        $('#{{  template.id }}').DataTable();
+        $('#{{ oversight.id }}').DataTable();
     });
 </script>
 {% endblock %}

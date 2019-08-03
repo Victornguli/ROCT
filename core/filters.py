@@ -1,5 +1,5 @@
 from django import forms
-from .models import RO, CO, BU, Template
+from .models import RO, CO, BU, Template, Oversight
 import django_filters
 
 class TemplateFilter(django_filters.FilterSet):
@@ -11,3 +11,22 @@ class TemplateFilter(django_filters.FilterSet):
     class Meta:
         model = Template
         fields = ["template_name",'regional_office', 'country_office', 'business_unit']
+
+
+
+class OversightFilter(django_filters.FilterSet):
+    oversight_status = (
+        ("ongoing", "Ongoing"),
+        ("follow_up", "Follow Up"),
+        ("closed", "Closed"),
+    )
+
+    status = django_filters.ChoiceFilter(choices = oversight_status)
+    close_year = django_filters.CharFilter()
+    regional_office = django_filters.ModelChoiceFilter(queryset=RO.objects.all(), widget=forms.Select)
+    country_office = django_filters.ModelChoiceFilter(queryset=CO.objects.all(), widget=forms.Select)
+    business_unit = django_filters.ModelChoiceFilter(queryset=BU.objects.all(), widget=forms.Select)
+
+    class Meta:
+        model = Oversight
+        fields = ["status", "close_year", "regional_office", "country_office", "business_unit"]
