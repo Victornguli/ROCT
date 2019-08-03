@@ -1,4 +1,7 @@
 from django.shortcuts import render, redirect
+from django.http import JsonResponse, HttpResponse
+
+
 
 from .models import Template, Area, Section, RO, CO, BU, Oversight
 from .filters import TemplateFilter, OversightFilter
@@ -172,3 +175,20 @@ def editOversight(request, oversight_id):
     }
 
     return render(request, "core/edit_oversight.html", context)    
+
+
+#Ajax call to this view to display relevant area form values for a specific area
+def renderAreaForm(request):
+    area_id = request.GET.get("area_id",None)
+    area = Area.objects.get(pk=area_id)
+    data = {
+        "area_name":area.area_name,
+        "expected_controls":area.expected_controls,
+        "findings":area.findings,
+        "risk":area.risk,
+        "recommendation":area.recommendation,
+        "comment":area.comment,
+        "implementation_date":area.implementation_date,
+    }
+    print(data)
+    return JsonResponse(data)
