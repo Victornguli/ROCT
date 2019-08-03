@@ -11,7 +11,16 @@ Filter Templates
 {% block content %}
 <style>
     table {
-    empty-cells: hide;
+        empty-cells: hide;
+    }
+    tr{
+        text-align: left;
+    }
+    td {
+        vertical-align: top;
+        text-align: right;
+        padding-right: 5px;
+        /* horizontal-align:  right; */
     }
 </style>
 <div class="container">
@@ -30,7 +39,7 @@ Filter Templates
             </div>
         </div>
         <div class="card-body">
-            <table id="{{ template.id }}" data-order="[]" class="display bordered" >
+            <table id="{{ template.id }}" data-order="[]" class="display table-bordered" >
                 <thead>
                     <tr>
                         <th>Area </th>
@@ -46,7 +55,7 @@ Filter Templates
                     {% for section in sections %}
                     <tr>
                         <td colspan="7">
-                            <div class="alert alert-info mb-1 " style="padding: 5px !important">{{ section.section_name }}
+                            <div class="alert alert-info mb-1 text-left" style="padding: 5px !important">{{ section.section_name }}
                             </div>
                             <div class="text-center mb-3 mt-0">
                             <button class="btn btn-outline-primary btn-sm" data-toggle="collapse" data-target="#form-{{ section.id }}">Add Area</button>
@@ -64,16 +73,27 @@ Filter Templates
                         <tr>
                         <td>{{ area.area_name }}</td>
                         <td>{{ area.expected_controls }}</td>
-                        <td>{{ area.findings }}</td>
-                        <td>{{ area.risk }}</td>
-                        <td>{{ area.recommendation }}</td>
-                        <td>{{ area.comment }}</td>
-                        <td>{{ area.implementation_date }}</td>
-                    </tr>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td></td>
+                            <td><td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
                         {% endif %}
+                        
                     {% endfor %}
                     <tr>
-                        <td colspan="7" class="text-center" valign = "top" style="left: 0">
+                        <td colspan="7" class="text-center">
                             <form id="form-{{ section.id }}" action="{% url "edit_template" template.id %}" method="POST" class="collapse hide">
                                 {% csrf_token %}
                                 <div class="row">
