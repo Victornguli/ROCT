@@ -12,6 +12,15 @@ Oversight Missions
     table {
         empty-cells: hide;
     }
+    tr{
+        text-align: left;
+    }
+    td {
+        vertical-align: top;
+        text-align: right;
+        padding: 5px;
+        /* horizontal-align:  right; */
+    }
 </style>
 <div class="container">
     <div class="card mt-3 mb-4">
@@ -41,7 +50,7 @@ Oversight Missions
                     {% for section in sections %}
                     <tr>
                         <td colspan="7">
-                            <div class="alert alert-info mb-1 " style="padding: 5px !important">
+                            <div class="alert alert-info mb-1 text-left" style="padding: 5px !important">
                                 {{ section.section_name }}
                             </div>
                         </td>
@@ -55,24 +64,67 @@ Oversight Missions
                     {% for area in areas %}
                     {% if area.section == section %}
                     <tr>
-                        <td>{{ area.area_name }}</td>
-                        <td>{{ area.expected_controls }}</td>
-                        <td>{{ area.findings }}</td>
-                        <td>{{ area.risk }}</td>
-                        <td>{{ area.recommendation }}</td>
-                        <td>{{ area.comment }}</td>
-                        <td>{{ area.implementation_date }}</td>
+                        <td>
+                            {% if area.area_name %}
+                            {{ area.area_name }}                            
+                            {% else %}
+                            &nbsp;
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if area.expected_controls %}
+                            {{ area.expected_controls }}                            
+                            {% else %}
+                            &nbsp;
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if area.findings %}
+                            {{ area.findings }}                            
+                            {% else %}
+                            &nbsp;
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if area.risk %}
+                            {{ area.risk }}                            
+                            {% else %}
+                            &nbsp;
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if area.recommendation %}
+                            {{ area.recommendation }}                            
+                            {% else %}
+                            &nbsp;
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if area.comment %}
+                            {{ area.comment }}                            
+                            {% else %}
+                            &nbsp;
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if area.implementation_date %}
+                            {{ area.implementation_date }}                            
+                            {% else %}
+                            &nbsp;
+                            {% endif %}
+                        </td>
+                        <td></td>
                     </tr>
 
                     <tr>
                         <td colspan="7" class="text-left">
-                            <button class="btn btn-outline-primary btn-sm" data-toggle="collapse"
-                                data-target="#form-{{ area.id }}">Edit Area</button>
+                            <button class="edit-btn btn btn-outline-primary btn-sm collapsed" data-toggle="collapse"
+                                data-target="#form-{{ area.id }}" data-id="{{ area.id }}">Edit Area</button>
                             <form id="form-{{ area.id }}" action="{% url "edit_oversight" oversight.id %}" method="POST"
                                 class="collapse">
-                                {% csrf_token %}
-                                <div class="row">
-                                    <input type="text" name="area_id" value="{{ area.id }}" hidden>
+                                {% csrf_token %}                              
+                                <div class="row" id="form-{{ area.id }}-data">
+                                    <input type="text" name="area_id" value="{{ area.id }}" id="input-{{ area.id }}" hidden>
                                     <input type="text" name="section_id" value="{{ section.id }}" hidden>
                                     {% for field in area_form %}
                                     <div class="form-group col-md-4">
@@ -84,6 +136,7 @@ Oversight Missions
 
                             </form>
                         </td>
+                        
                         <td></td>
                         <td></td>
                         <td></td>
@@ -95,15 +148,6 @@ Oversight Missions
                     {% endfor %}
 
                     {% endfor %}
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
                 </tbody>
             </table>
         </div>
@@ -116,6 +160,33 @@ Oversight Missions
 <script>
     $(document).ready(function () {
         $('#{{ oversight.id }}').DataTable();
+        $(".edit-btn").on("click", function(){
+            if($(this).hasClass("collapsed")){
+                let area_id = $(this).attr("data-id")
+                console.log(area_id)   
+                
+                $.ajax({
+                    type: "get",
+                    url: "/ajax/area_form",
+                    data: {
+                        area_id:area_id,
+                    },
+                    success: function (data, status) {
+                        // console.log(data)
+                        let form = $(`#form-${area_id}-data`)
+                        form.find("input[name='area_name']").val(data.area_name)
+                        form.find("textarea[name='expected_controls']").val(data.expected_controls)
+                        form.find("textarea[name='findings']").val(data.findings)
+                        form.find("select[name='risk']").val(data.risk)
+                        form.find("textarea[name='recommendation']").val(data.recommendation)
+                        form.find("textarea[name='comment']").val(data.comment)
+                        form.find("input[name='implementation_date']").val(data.implementation_date)
+                        // let area2 = form.find(`#input-{{ area_id }}`)
+                        console.log(data.expected_controls)
+                    }
+                });
+            }
+        })
     });
 </script>
 {% endblock %}
