@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 
 from .models import Template, Area, Section, RO, CO, BU, Oversight
-from .filters import TemplateFilter
-from .forms import AddAreaForm, AddSectionForm, AddTemplateForm, AddOversightForm, addActiveAreasForm
+from .filters import TemplateFilter, OversightFilter
+from .forms import AddAreaForm, AddSectionForm, AddTemplateForm, AddOversightForm, EditActiveAreaForm
 # Create your views here.
 
 def filterTemplates(request):
@@ -119,25 +119,51 @@ def startOversight(request, template_id):
     bu = template.business_unit
     sections = template.sections.all()
     areas = template.areas.all()
-    oversight = Oversight.objects.create(oversight_name="{} ".format(template.template_name), template=template, regional_office=ro, country_office=co, business_unit=bu, status="ongoing")
+    oversight = Oversight.objects.create(oversight_name="{} Oversight".format(template.template_name), template=template, regional_office=ro, country_office=co, business_unit=bu, status="ongoing")
     for section in sections:
         oversight.sections.add(section)
     
     for area in areas:
         oversight.areas.add(area)
 
-    return redirect("ongoing_oversight", oversight_id=oversight.id)
+    return redirect("edit_oversight", oversight_id=oversight.id)
 
 
-def ongoingOversight(request, oversight_id):
+def ongoingOversight(request):
+    oversights = Oversight.objects.all()
+    oversight_filter = OversightFilter(request.GET, queryset=oversights)
+    context = {
+        "oversights": oversight_filter,
+    }
+
+    return render(request, "core/ongoing.html", context)
+
+
+def editOversight(request, oversight_id):
     oversight = Oversight.objects.get(pk=oversight_id)
-    template = oversight.template
-    sections = template.sections.all()
-    areas = template.areas.all()
-
+    # template = oversight.template
+    sections = oversight.sections.all()
+    areas = oversight.areas.all()
     #forms
-    area_form = AddAreaForm
+    area_form = EditActiveAreaForm
     
+    if request.method == "POST":
+        area_form = EditActiveAreaForm(request.POST)
+        if area_form.is_valid():
+            findings = area_form.cleaned_data.get("findings")
+            risk = area_form.cleaned_data.get("risk")
+            recommendation = area_form.cleaned_data.get("recommendation")
+            comment = area_form.cleaned_data.get("comment")
+            date = area_form.cleaned_data.get("implementation_date")
+            area = Area.objects.get(pk=request.POST.copy()["area_id"])            
+            section = Section.objects.get(pk=request.POST.copy()["section_id"])
+            
+            #Update Area
+            Area.objects.filter(pk=request.POST.copy()["area_id"]).update(findings=findings, risk=risk, recommendation=recommendation, comment=comment, implementation_date=date)
+
+            print(findings, risk, recommendation, comment, section, area)
+            return redirect("edit_oversight", oversight_id=oversight_id)
+            
     context = {
         "oversight": oversight,
         "sections": sections,
@@ -145,4 +171,4 @@ def ongoingOversight(request, oversight_id):
         "area_form": area_form,
     }
 
-    return render(request, "core/ongoing.html", context)
+    return render(request, "core/edit_oversight.html", context)    
