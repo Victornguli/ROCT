@@ -27,9 +27,13 @@ Oversight Missions
         <div class="card-header">
             <h4><b class="text-info">Oversight Mission Name: {{ oversight.oversight_name }}</b></h4>
             <div class="">
-                <form action="" class="form-inline">
+                <!-- <form action="" class="form-inline">
                     <br>
                     <button class="btn btn-outline-dark m-3">Submit Oversight Report</button>
+                </form> -->
+                <form action="{% url "export" oversight.id %}" class="form-inline">
+                    <br>
+                    <button class="btn btn-outline-dark m-3">Export To CSV</button>
                 </form>
             </div>
         </div>
