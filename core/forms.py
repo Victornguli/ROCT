@@ -20,9 +20,9 @@ class AddAreaForm(forms.Form):
 
 class EditActiveAreaForm(forms.Form):
     risk_choices = (
-        ("High", "high"),
-        ("Medium", "medium"),
-        ("Low", "low"),
+        ("high", "High"),
+        ("medium", "Medium"),
+        ("low", "Low"),
     )
     
     area_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'placeholder':'Area Name'}), help_text="Type in the name of the area")

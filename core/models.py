@@ -46,9 +46,9 @@ class Section(models.Model):
 
 class Area(models.Model):
     risk_choices = (
-        ("High", "high"),
-        ("Medium", "medium"),
-        ("Low", "low"),
+        ("high", "High"),
+        ("medium", "Medium"),
+        ("low", "Low"),
     )
     area_name = models.CharField(max_length=100, verbose_name="Area name", null=True)
     expected_controls = models.CharField(max_length=1000, verbose_name="Expected Controls", null=True)

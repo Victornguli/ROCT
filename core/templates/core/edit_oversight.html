@@ -17,7 +17,7 @@ Oversight Missions
     }
     td {
         vertical-align: top;
-        text-align: right;
+        text-align: left;
         padding: 5px;
         /* horizontal-align:  right; */
     }
@@ -89,13 +89,19 @@ Oversight Missions
                             &nbsp;
                             {% endif %}
                         </td>
-                        <td>
                             {% if area.risk %}
-                            {{ area.risk }}                            
+                                {% if area.risk == "high" %}
+                                    <td class="bg-danger text-light">{{ area.risk|capfirst }}</td>
+                                {% elif area.risk == "medium" %}
+                                    <td class="bg-warning text-light">{{ area.risk|capfirst }}</td>
+                                {% else %}
+                                    <td class="bg-success text-light">{{ area.risk|capfirst }}</td>
+                                {% endif %}                          
                             {% else %}
-                            &nbsp;
+                                </td>
+                                &nbsp;
+                                </td>
                             {% endif %}
-                        </td>
                         <td>
                             {% if area.recommendation %}
                             {{ area.recommendation }}                            
