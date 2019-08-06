@@ -8,38 +8,24 @@ Oversight Missions
 {% endblock %}
 
 {% block content %}
-<style>
-    table {
-        empty-cells: hide;
-    }
-    tr{
-        text-align: left;
-    }
-    td {
-        vertical-align: top;
-        text-align: left;
-        padding: 5px;
-        /* horizontal-align:  right; */
-    }
-</style>
-<div class="container">
-    <div class="card mt-3 mb-4">
+<div class="container-fluid">
+    <div class="card">
         <div class="card-header">
-            <h4><b class="text-info">Oversight Mission Name: {{ oversight.oversight_name }}</b></h4>
             <div class="">
+            <b class="text-info">Mission Title: {{ oversight.oversight_name }}</b>
                 <!-- <form action="" class="form-inline">
                     <br>
                     <button class="btn btn-outline-dark m-3">Submit Oversight Report</button>
                 </form> -->
                 <form action="{% url "export" oversight.id %}" class="form-inline">
                     <br>
-                    <button class="btn btn-outline-dark m-3">Export To CSV</button>
+                    <button style="margin: 0 !important" class="btn btn-sm btn-outline-dark m-3">Export To CSV</button>
                 </form>
             </div>
         </div>
         <div class="card-body">
-            <table id="{{ oversight.id }}" data-order="[]" class="display table-bordered">
-                <thead>
+            <table id="{{ oversight.id }}" data-order="[]" class="table-sm table-bordered">
+                <thead class="table-head table-secondary">
                     <tr>
                         <th>Area </th>
                         <th>Expected Controls</th>
@@ -56,31 +42,31 @@ Oversight Missions
                         <td colspan="7" class="alert alert-info">
                             {{ section.section_name }}
                         </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
                     </tr>
                     {% for area in areas %}
                     {% if area.section == section %}
                     <tr>
-                        <td>
+                        <td class="area-field" contenteditable="true" field="area_name" data-id = "{{ area.id }}" >
                             {% if area.area_name %}
                             {{ area.area_name }}                            
                             {% else %}
                             &nbsp;
                             {% endif %}
                         </td>
-                        <td>
+                        <td class="area-field" contenteditable="true" field="expected_controls" data-id = "{{ area.id }}" >
                             {% if area.expected_controls %}
                             {{ area.expected_controls }}                            
                             {% else %}
                             &nbsp;
                             {% endif %}
                         </td>
-                        <td>
+                        <td class="area-field" contenteditable="true" field="findings" data-id = "{{ area.id }}" >
                             {% if area.findings %}
                             {{ area.findings }}                            
                             {% else %}
@@ -89,25 +75,41 @@ Oversight Missions
                         </td>
                             {% if area.risk %}
                                 {% if area.risk == "high" %}
-                                    <td class="bg-danger text-light">{{ area.risk|capfirst }}</td>
+                                    <td class="area-risk bg-danger text-light" contenteditable="false" field="risk" data-id = "{{ area.id }}">
+                                        <span>{{ area.risk|capfirst }}</span>
+                                        <div style="display: none">
+                                        {% render_field area_form.risk %}
+                                        </div>
+                                    </td>
                                 {% elif area.risk == "medium" %}
-                                    <td class="bg-warning text-light">{{ area.risk|capfirst }}</td>
+                                    <td class="area-risk bg-warning text-light" contenteditable="false" field="risk" data-id = "{{ area.id }}">   
+                                        <span>{{ area.risk|capfirst }}</span>
+                                        <div style="display: none">
+                                        {% render_field area_form.risk %}
+                                        </div>
+                                    </td>
                                 {% else %}
-                                    <td class="bg-success text-light">{{ area.risk|capfirst }}</td>
+                                    <td class="area-risk bg-success text-light" contenteditable="false" field="risk" data-id = "{{ area.id }}">
+                                        <span>{{ area.risk|capfirst }}</span>
+                                        <div style="display: none">
+                                        {% render_field area_form.risk %}
+                                        </div>
+                                    </td>
                                 {% endif %}                          
                             {% else %}
                                 </td>
                                 &nbsp;
                                 </td>
                             {% endif %}
-                        <td>
+                        <td class="area-field" contenteditable="true" field="recommendation" data-id = "{{ area.id }}" >
                             {% if area.recommendation %}
                             {{ area.recommendation }}                            
                             {% else %}
                             &nbsp;
                             {% endif %}
                         </td>
-                        <td>
+
+                        <td class="area-field" contenteditable="true" field="comment" data-id = "{{ area.id }}" >
                             {% if area.comment %}
                             {{ area.comment }}                            
                             {% else %}
@@ -116,23 +118,21 @@ Oversight Missions
                         </td>
                             {% if area.implementation_date %}
                                 {% if today > area.implementation_date %}
-                                    <td class="text-danger">{{ area.implementation_date }}</td>
+                                    <td class="area-field" contenteditable="false" field="implementation_date" data-id = "{{ area.id }}" class="text-danger">{{ area.implementation_date }}</td>
                                 {% else %}
-                                    <td class="text-danger">{{ area.implementation_date }}</td>
-                                {% endif %}
-                                                        
+                                    <td class="area-field" contenteditable="false" field="area_name" data-id = "{{ area.id }}" class="text-success">{{ area.implementation_date }}</td>
+                                {% endif %}                   
                             {% else %}
                             <td>&nbsp;</td>
                             {% endif %}
                         <td></td>
                     </tr>
 
-                    <tr>
-                        <td colspan="7" class="text-left ">
+                    <tr class="mb-4">
+                        <td colspan="7" class="text-left">
                             <button class="edit-btn btn btn-outline-primary btn-sm collapsed" data-toggle="collapse"
                                 data-target="#form-{{ area.id }}" data-id="{{ area.id }}">Edit Area</button>
-                            <form id="form-{{ area.id }}" action="{% url "edit_oversight" oversight.id %}" method="POST"
-                                class="collapse">
+                            <form id="form-{{ area.id }}" action="{% url "edit_oversight" oversight.id %}" method="POST" class="collapse">
                                 {% csrf_token %}                              
                                 <div class="row" id="form-{{ area.id }}-data">
                                     <input type="text" name="area_id" value="{{ area.id }}" id="input-{{ area.id }}" hidden>
@@ -147,12 +147,12 @@ Oversight Missions
                             </form>
                         </td>
                         
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
                     </tr>
                     {% endif %}
                     {% endfor %}
@@ -167,13 +167,35 @@ Oversight Missions
 <script src="{% static "core/js/bootstrap.min.js" %}"></script>
 <script src="{% static "core/js/datatables.min.js" %}"></script>
 <script src="{% static "core/data-tables/js/dataTables.bootstrap4.min.js" %}"></script>
+
 <script>
+    function saveField(area_id, area_name, text){
+        // console.log(area_id+" "+area_name+" "+text);
+        $.ajax({
+            type: "get",
+            url: "/edit/update_inline",
+            data: {
+                area_id : area_id,
+                area_name : area_name,
+                text : text,
+            },
+
+            success: function (response) {
+                console.log(response)    
+            }
+        });
+    }
+
     $(document).ready(function () {
-        $('#{{ oversight.id }}').DataTable();
+        $('#{{ oversight.id }}').DataTable({
+            "targets": 'no-sort',
+            "bSort": false,
+            "order": []
+        });
         $(".edit-btn").on("click", function(){
             if($(this).hasClass("collapsed")){
                 let area_id = $(this).attr("data-id")
-                console.log(area_id)   
+                // console.log(area_id)   
                 
                 $.ajax({
                     type: "get",
@@ -181,7 +203,7 @@ Oversight Missions
                     data: {
                         area_id:area_id,
                     },
-                    success: function (data, status) {
+                    success: function (data, status){
                         // console.log(data)
                         let form = $(`#form-${area_id}-data`)
                         form.find("input[name='area_name']").val(data.area_name)
@@ -197,6 +219,59 @@ Oversight Missions
                 });
             }
         })
+
+        let timer;
+        let timeout = 100;
+
+        // $(".area-risk").on("click focus", function(){
+        //     let risk = $(this)
+        //     let risk_text = risk.find("span")
+        //     risk.find("div").show()
+        //     let risk_select = risk.find("select")
+        //     risk_select.on("change", function(){
+        //         console.log(risk_select.val())
+        //         risk_text.text(risk_select.val().charAt(0).toUpperCase() + risk_select.val().slice(1))
+        //         let area_name = risk.attr("field")
+        //         let area_id = risk.attr("data-id")
+        //         let text = risk_text.text().charAt(0).toLowerCase() + risk_text.text().slice(1)
+        //         // console.log(area_name + )
+        //         saveField(area_id, area_name, text)
+        //     })
+        //     // console.log(risk_select.val())
+        // })
+
+        // $(".area-risk").on("focusout", function(){
+        //     let risk = $(this).find("div")
+        //     risk.hide()
+        //     console.log(risk.val())
+        // })
+
+        $('.area-field').on("keyup focusout paste", function(){
+            clearTimeout(timer);
+            let area_field = $(this);
+            if (area_field.text()){
+                timer = setTimeout(function(){
+                    let area_id = area_field.attr("data-id")
+                    let area_name = area_field.attr("field")
+                    let text = area_field.text()
+                    // if(area_name == "risk"){
+                    //     console.log(area_name)
+                    //     area_field.find("div").show();
+                    // }
+                    saveField(area_id, area_name, text)
+                    
+                }, timeout);
+            }
+        });
+
+        // $(".area-field").on("keyup", function(){
+        //     let area_field = $(this).text()
+        //     let area_id = $(this).attr("data-id")
+        //     setTimeout(function(){
+        //         console.log(area_id)
+        //     }, 4000)
+        // })
     });
 </script>
+
 {% endblock %}

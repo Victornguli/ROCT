@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core.views import filterTemplates, loadTemplate, editTemplate, defineTemplate, startOversight, ongoingOversight, editOversight, renderAreaForm, export
+from core.views import filterTemplates, loadTemplate, editTemplate, defineTemplate, startOversight, ongoingOversight, editOversight, renderAreaForm, export, updateInline
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +27,7 @@ urlpatterns = [
     path('oversights/',ongoingOversight,name="oversights"),
     path('edit-oversight/<int:oversight_id>',editOversight,name="edit_oversight"),
     path('ajax/area_form',renderAreaForm ,name="render_area"),
+    path('edit/update_inline',updateInline ,name="update_inline"),
     path('export/<int:oversight_id>',export ,name="export"),
 
 ]

@@ -14,12 +14,12 @@ Ongoing Oversight Missions
     <div class="card mt-4">
         <div class="card-header">
             <div class="row">
-                <div class="col-md-4"></div>
                 <div class="col-md-4">
                     <a class="card-link" style="color: black" data-toggle="collapse" href="#collapseOne">
-                        <h4 style="margin-top: 0" class="btn btn-block btn-secondary">Filter Oversight Missions</h4>
+                        <h4 style="margin-top: 0" class="btn btn-sm btn-block btn-secondary">Filter Oversight Missions</h4>
                     </a>
                 </div>
+                <div class="col-md-4"></div>
                 <div class="col-md-4"></div>
             </div>
             <form method="get">
@@ -58,7 +58,7 @@ Ongoing Oversight Missions
             </form>
         </div>
         <div class="card-body">
-            <table id="template" class="table table-striped table-bordered">
+            <table id="template" data-order="[]" class="table table-sm table-striped table-bordered">
                 <thead>
                     <tr>
                         <th>Template Name</th>
@@ -94,7 +94,11 @@ Ongoing Oversight Missions
     <script src="{% static "core/data-tables/js/dataTables.bootstrap4.min.js" %}"></script>
     <script>
         $(document).ready(function() {
-            $('#template').DataTable();
+            $('#template').DataTable({
+                "targets": 'no-sort',
+                "bSort": false,
+                "order": []
+            });
         });
     </script>
     {% block javascript %}
