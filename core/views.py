@@ -3,6 +3,7 @@ from django.http import JsonResponse, HttpResponse
 from django.utils.encoding import smart_str
 
 import csv
+import datetime
 
 from .resources import OversightResource
 from .models import Template, Area, Section, RO, CO, BU, Oversight
@@ -212,6 +213,7 @@ def ongoingOversight(request):
 
 
 def editOversight(request, oversight_id):
+    today = datetime.date.today()
     oversight = Oversight.objects.get(pk=oversight_id)
     # template = oversight.template
     sections = oversight.sections.all()
@@ -241,6 +243,7 @@ def editOversight(request, oversight_id):
         "sections": sections,
         "areas": areas,
         "area_form": area_form,
+        "today": today,
     }
 
     return render(request, "core/edit_oversight.html", context)    

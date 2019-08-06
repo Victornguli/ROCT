@@ -53,10 +53,8 @@ Oversight Missions
                 <tbody>
                     {% for section in sections %}
                     <tr>
-                        <td colspan="7">
-                            <div class="alert alert-info mb-1 text-left" style="padding: 5px !important">
-                                {{ section.section_name }}
-                            </div>
+                        <td colspan="7" class="alert alert-info">
+                            {{ section.section_name }}
                         </td>
                         <td></td>
                         <td></td>
@@ -116,18 +114,21 @@ Oversight Missions
                             &nbsp;
                             {% endif %}
                         </td>
-                        <td>
                             {% if area.implementation_date %}
-                            {{ area.implementation_date }}                            
+                                {% if today > area.implementation_date %}
+                                    <td class="text-danger">{{ area.implementation_date }}</td>
+                                {% else %}
+                                    <td class="text-danger">{{ area.implementation_date }}</td>
+                                {% endif %}
+                                                        
                             {% else %}
-                            &nbsp;
+                            <td>&nbsp;</td>
                             {% endif %}
-                        </td>
                         <td></td>
                     </tr>
 
                     <tr>
-                        <td colspan="7" class="text-left">
+                        <td colspan="7" class="text-left ">
                             <button class="edit-btn btn btn-outline-primary btn-sm collapsed" data-toggle="collapse"
                                 data-target="#form-{{ area.id }}" data-id="{{ area.id }}">Edit Area</button>
                             <form id="form-{{ area.id }}" action="{% url "edit_oversight" oversight.id %}" method="POST"
@@ -143,7 +144,6 @@ Oversight Missions
                                     {% endfor %}
                                 </div>
                                 <button class="btn btn-info">Update</button>
-
                             </form>
                         </td>
                         
