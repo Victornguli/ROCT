@@ -18,6 +18,26 @@
     <link rel="stylesheet" href="{% static "core/data-tables/css/dataTables.bootstrap4.min.css" %}">
     <link rel="stylesheet" href="">
     <link rel="stylesheet" href="">
+
+    <style>
+        table {
+            empty-cells: hide;
+            font-size: 14px;
+        }
+        th{
+            padding: 10px;
+            border: none;
+        }
+        tr{
+            text-align: left;
+        }
+        td {
+            vertical-align: top;
+            text-align: left;
+            padding: 10px;
+            /* horizontal-align:  right; */
+        }
+    </style>
     {% endblock %}
 </head>
 

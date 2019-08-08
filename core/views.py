@@ -262,5 +262,36 @@ def renderAreaForm(request):
         "comment":area.comment,
         "implementation_date":area.implementation_date,
     }
-    print(data)
+    # print(data) Debug
     return JsonResponse(data)
+
+
+def updateInline(request):
+    if request.method == "GET":
+        area_id = request.GET.get("area_id", None)
+        area_name = request.GET.get("area_name", None)
+        text = request.GET.get("text", None)
+
+        if(area_name == "area_name"):
+            area = Area.objects.filter(pk=area_id).update(area_name=text)
+        elif area_name == "expected_controls":
+            area = Area.objects.filter(pk=area_id).update(expected_controls=text)
+        elif area_name == "findings":
+            area = Area.objects.filter(pk=area_id).update(findings=text)
+        elif area_name == "risk":
+            area = Area.objects.filter(pk=area_id).update(risk=text)
+            # pass
+        elif area_name == "recommendation":
+            area = Area.objects.filter(pk=area_id).update(recommendation=text)
+        elif area_name == "comment":
+            area = Area.objects.filter(pk=area_id).update(comment=text)
+        elif area_name == "implementation_date":
+            # area = Area.objects.filter(pk=area_id).update(implementation_date=text)
+            pass
+        else:
+            pass
+        
+        return HttpResponse("success")
+        
+        # print(area_id, area_name, text)
+    return HttpResponse("error")    

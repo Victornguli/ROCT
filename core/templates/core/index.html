@@ -13,11 +13,15 @@ Filter Templates
     <div class="card m-auto">
         <div class="card-header">
             <div class="row">
-                <div class="col-md-4"></div>
-                <div class="col-md-4">
-                    <button class="btn btn-info w-100" data-toggle="collapse" data-target="#addForm">Create New Unit Template</button>
+                <div class="col-md-3">
+                    <button class="btn btn-sm btn-info w-100" data-toggle="collapse" data-target="#addForm">Create New Unit Template</button>
                 </div>
-                <div class="col-md-4"></div>
+                <div class="col-md-3">
+                    <a class="card-link" style="color: black" data-toggle="collapse" href="#filterForm">
+                        <h4 style="margin-top: 0" class="btn btn-sm btn-block btn-secondary">Filter Templates</h4>
+                    </a>
+                </div>
+                <div class="col-md-6"></div>
                 <hr>
             </div>
         </div>
@@ -44,21 +48,9 @@ Filter Templates
             </div>
             <button class="btn btn-outline-primary btn-block" type="submit">Submit</button>
         </form>
-    </div>
 
-    <div class="card mt-4">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-md-4"></div>
-                <div class="col-md-4">
-                    <a class="card-link" style="color: black" data-toggle="collapse" href="#collapseOne">
-                        <h4 style="margin-top: 0" class="btn btn-block btn-secondary">Filter Templates</h4>
-                    </a>
-                </div>
-                <div class="col-md-4"></div>
-            </div>
-            <form method="get">
-                <div class="bg-light p-3 collapse hide" id="collapseOne">
+        <form class="collapse hide" method="get" id="filterForm">
+                <div class="bg-light p-2">
                     <div class="row">
                         <div class="form-group col-sm-4 col-md-3">
                             {{ templates.form.template_name.label_tag }}
@@ -85,9 +77,11 @@ Filter Templates
                     </button>
                 </div>
             </form>
-        </div>
+    </div>
+
+    <div class="card mt-2">
         <div class="card-body">
-            <table id="template" class="table table-striped table-bordered">
+            <table id="template" class="table table-sm table-striped table-bordered">
                 <thead>
                     <tr>
                         <th>Template Name</th>
@@ -113,7 +107,6 @@ Filter Templates
                     {% endfor %}
                 </tbody>
             </table>
-            </{{>
             </div>
     </div>
 
@@ -123,7 +116,11 @@ Filter Templates
     <script src="{% static "core/data-tables/js/dataTables.bootstrap4.min.js" %}"></script>
     <script>
         $(document).ready(function() {
-            $('#template').DataTable();
+            $('#template').DataTable({
+                "targets": 'no-sort',
+                "bSort": false,
+                "order": []
+            });
         });
     </script>
     {% block javascript %}
