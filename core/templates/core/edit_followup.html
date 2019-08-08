@@ -4,7 +4,7 @@
 {% load static %}
 
 {% block title %}
-Oversight Missions
+Edit Follow Up Mission
 {% endblock %}
 
 {% block content %}
@@ -15,7 +15,7 @@ Oversight Missions
             <b class="text-info">Mission Title: {{ oversight.oversight_name }}</b>
                 <div class="d-flex">
                     <form action="{% url "submit_oversight" oversight.id %}" class="form-inline">
-                        <button style="margin: 0 !important" class="btn btn-sm btn-outline-dark">Submit Oversight Report</button>
+                        <button style="margin: 0 !important" class="btn btn-sm btn-outline-dark">Close</button>
                     </form>
                     <form action="{% url "export" oversight.id %}" class="form-inline">
                         <br>
@@ -53,21 +53,21 @@ Oversight Missions
                     {% for area in areas %}
                     {% if area.section == section %}
                     <tr>
-                        <td class="area-field" contenteditable="true" field="area_name" data-id = "{{ area.id }}" >
+                        <td class="area-field" contenteditable="false" field="area_name" data-id = "{{ area.id }}" >
                             {% if area.area_name %}
                             {{ area.area_name }}                            
                             {% else %}
                             &nbsp;
                             {% endif %}
                         </td>
-                        <td class="area-field" contenteditable="true" field="expected_controls" data-id = "{{ area.id }}" >
+                        <td class="area-field" contenteditable="false" field="expected_controls" data-id = "{{ area.id }}" >
                             {% if area.expected_controls %}
                             {{ area.expected_controls }}                            
                             {% else %}
                             &nbsp;
                             {% endif %}
                         </td>
-                        <td class="area-field" contenteditable="true" field="findings" data-id = "{{ area.id }}" >
+                        <td class="area-field" contenteditable="false" field="findings" data-id = "{{ area.id }}" >
                             {% if area.findings %}
                             {{ area.findings }}                            
                             {% else %}
@@ -102,7 +102,7 @@ Oversight Missions
                                 &nbsp;
                                 </td>
                             {% endif %}
-                        <td class="area-field" contenteditable="true" field="recommendation" data-id = "{{ area.id }}" >
+                        <td class="area-field" contenteditable="false" field="recommendation" data-id = "{{ area.id }}" >
                             {% if area.recommendation %}
                             {{ area.recommendation }}                            
                             {% else %}

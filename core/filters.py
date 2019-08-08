@@ -30,3 +30,15 @@ class OversightFilter(django_filters.FilterSet):
     class Meta:
         model = Oversight
         fields = ["status", "close_year", "regional_office", "country_office", "business_unit"]
+
+
+class FollowupFilter(django_filters.FilterSet):
+    close_year = django_filters.CharFilter()
+    regional_office = django_filters.ModelChoiceFilter(queryset=RO.objects.all(), widget=forms.Select)
+    country_office = django_filters.ModelChoiceFilter(queryset=CO.objects.all(), widget=forms.Select)
+    business_unit = django_filters.ModelChoiceFilter(queryset=BU.objects.all(), widget=forms.Select)
+
+    class Meta:
+        model = Oversight
+        fields = ["close_year", "regional_office", "country_office", "business_unit"]
+

@@ -52,3 +52,7 @@ class AddTemplateForm(forms.Form):
 class AddOversightForm(forms.Form):
     oversight_name = forms.CharField(max_length=200, required=True, widget=forms.TextInput(attrs={'placeholder':'Oversight Name'}), help_text="Type in the name of this Oversight Mission")
     close_year = forms.DateField(widget=forms.SelectDateWidget())
+
+class EditFollowUp(forms.Form):
+    implementation_comment = forms.CharField(max_length=1000, required=True, widget=forms.TextInput(attrs={'placeholder':'Implementation Comments'}))
+    implementation_date = forms.DateField(required=False)

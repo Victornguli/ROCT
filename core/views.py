@@ -294,4 +294,57 @@ def updateInline(request):
         return HttpResponse("success")
         
         # print(area_id, area_name, text)
-    return HttpResponse("error")    
+    return HttpResponse("error")   
+
+
+def submitOversight(request, oversight_id):
+    oversight = Oversight.objects.filter(pk=oversight_id).update(status = "follow_up")
+    return redirect("follow_up")
+
+
+def filterFollowUp(request):
+    follow_up_missions = Oversight.objects.filter(status="follow_up")
+    follow_up_filter = OversightFilter(queryset = follow_up_missions)
+    context = {
+        "oversights":follow_up_filter,
+    }
+
+    return render(request, "core/followup.html", context)
+
+
+def editFollowUp(request, oversight_id):
+    today = datetime.date.today()
+    oversight = Oversight.objects.get(pk=oversight_id)
+    # template = oversight.template
+    sections = oversight.sections.all()
+    areas = oversight.areas.all()
+    #forms
+    area_form = EditActiveAreaForm
+    
+    if request.method == "POST":
+        area_form = EditActiveAreaForm(request.POST)
+        if area_form.is_valid():
+            findings = area_form.cleaned_data.get("findings")
+            risk = area_form.cleaned_data.get("risk")
+            recommendation = area_form.cleaned_data.get("recommendation")
+            comment = area_form.cleaned_data.get("comment")
+            date = area_form.cleaned_data.get("implementation_date")
+            area = Area.objects.get(pk=request.POST.copy()["area_id"])            
+            section = Section.objects.get(pk=request.POST.copy()["section_id"])
+            
+            #Update Area
+            Area.objects.filter(pk=request.POST.copy()["area_id"]).update(findings=findings, risk=risk, recommendation=recommendation, comment=comment, implementation_date=date)
+
+            print(findings, risk, recommendation, comment, section, area)
+            return redirect("edit_oversight", oversight_id=oversight_id)
+            
+    context = {
+        "oversight": oversight,
+        "sections": sections,
+        "areas": areas,
+        "area_form": area_form,
+        "today": today,
+    }
+
+    return render(request, "core/edit_followup.html", context)    
+

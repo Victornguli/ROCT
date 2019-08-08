@@ -5,31 +5,27 @@
 
 
 {% block title %}
-Ongoing Oversight Missions
+Follow up Missions
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid">
-    
-    <div class="card mt-4">
+    <div class="card m-auto">
         <div class="card-header">
             <div class="row">
-                <div class="col-md-4">
-                    <a class="card-link" style="color: black" data-toggle="collapse" href="#collapseOne">
-                        <h4 style="margin-top: 0" class="btn btn-sm btn-block btn-secondary">Filter Oversight Missions</h4>
+                <div class="col-md-3">
+                    <a class="card-link" style="color: black" data-toggle="collapse" href="#filterForm">
+                        <h4 style="margin-top: 0" class="btn btn-sm btn-block btn-secondary">Filter Follow Up Missions</h4>
                     </a>
                 </div>
-                <div class="col-md-4"></div>
-                <div class="col-md-4"></div>
+                <div class="col-md-6"></div>
+                <hr>
             </div>
-            <form method="get">
-                <div class="bg-light p-3 collapse hide" id="collapseOne">
-                    <div class="row">
-                        <div class="form-group col-sm-4 col-md-3">
-                            {{ oversights.form.status.label_tag }}
-                            {% render_field oversights.form.status class="form-control" %}
-                        </div>
+        </div>
 
+        <form class="collapse hide" method="get" id="filterForm">
+                <div class="bg-light p-2">
+                    <div class="row">
                         <div class="form-group col-sm-4 col-md-3">
                             {{ oversights.form.close_year.label_tag }}
                             {% render_field oversights.form.close_year class="form-control" %}
@@ -56,12 +52,14 @@ Ongoing Oversight Missions
                     </button>
                 </div>
             </form>
-        </div>
+    </div>
+
+    <div class="card mt-2">
         <div class="card-body">
-            <table id="template" data-order="[]" class="table table-sm table-striped table-bordered">
+            <table id="template" class="table table-sm table-striped table-bordered">
                 <thead>
                     <tr>
-                        <th>Template Name</th>
+                        <th>Overisght Title</th>
                         <th>Regional Office</th>
                         <th>Country Office</th>
                         <th>Business Unit</th>
@@ -70,24 +68,20 @@ Ongoing Oversight Missions
                 </thead>
                 <tbody>
                     {% for oversight in oversights.qs %}
-                    {% if oversight.status == "ongoing" %}
                     <tr>
                         <td>{{ oversight.oversight_name }}</td>
                         <td>{{ oversight.regional_office }}</td>
                         <td>{{ oversight.country_office }}</td>
                         <td>{{ oversight.business_unit }}</td>
                         <td>
-                            <a href="{% url "edit_oversight" oversight.id %}"><button
-                                class="btn btn-outline-primary btn-sm">Edit Oversight Mission</button>
+                            <a href="{% url "edit_follow_up" oversight.id %}"><button
+                                class="btn btn-outline-primary btn-sm">view</button>
                             </a>
                         </td>
                     </tr>
-                    {% else %}
-                    {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
-            </{{>
             </div>
     </div>
 
@@ -104,8 +98,6 @@ Ongoing Oversight Missions
             });
         });
     </script>
-
     {% block javascript %}
     {% endblock %}
-    
 {% endblock %}
