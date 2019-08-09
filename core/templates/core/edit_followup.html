@@ -4,11 +4,10 @@
 {% load static %}
 
 {% block title %}
-Oversight Missions
+Edit Follow Up Mission
 {% endblock %}
 
 {% block content %}
-
 <div class="container-fluid">
     <div class="card">
         <div class="card-header">
@@ -16,7 +15,7 @@ Oversight Missions
             <b class="text-info">Mission Title: {{ oversight.oversight_name }}</b>
                 <div class="d-flex">
                     <form action="{% url "submit_oversight" oversight.id %}" class="form-inline">
-                        <button style="margin: 0 !important" class="btn btn-sm btn-outline-dark">Submit Oversight Report</button>
+                        <button style="margin: 0 !important" class="btn btn-sm btn-outline-dark">Close</button>
                     </form>
                     <form action="{% url "export" oversight.id %}" class="form-inline">
                         <br>
@@ -54,23 +53,23 @@ Oversight Missions
                     {% for area in areas %}
                     {% if area.section == section %}
                     <tr>
-                        <td class="area-field" contenteditable="true" field="area_name" data-id = "{{ area.id }}" >
+                        <td class="area-field" contenteditable="false" field="area_name" data-id = "{{ area.id }}" >
                             {% if area.area_name %}
-                            {{ area.area_name }}
+                            {{ area.area_name }}                            
                             {% else %}
                             &nbsp;
                             {% endif %}
                         </td>
-                        <td class="area-field" contenteditable="true" field="expected_controls" data-id = "{{ area.id }}" >
+                        <td class="area-field" contenteditable="false" field="expected_controls" data-id = "{{ area.id }}" >
                             {% if area.expected_controls %}
-                            {{ area.expected_controls }}
+                            {{ area.expected_controls }}                            
                             {% else %}
                             &nbsp;
                             {% endif %}
                         </td>
-                        <td class="area-field" contenteditable="true" field="findings" data-id = "{{ area.id }}" >
+                        <td class="area-field" contenteditable="false" field="findings" data-id = "{{ area.id }}" >
                             {% if area.findings %}
-                            {{ area.findings }}
+                            {{ area.findings }}                            
                             {% else %}
                             &nbsp;
                             {% endif %}
@@ -84,7 +83,7 @@ Oversight Missions
                                         </div>
                                     </td>
                                 {% elif area.risk == "medium" %}
-                                    <td class="area-risk bg-warning text-light" contenteditable="false" field="risk" data-id = "{{ area.id }}">
+                                    <td class="area-risk bg-warning text-light" contenteditable="false" field="risk" data-id = "{{ area.id }}">   
                                         <span>{{ area.risk|capfirst }}</span>
                                         <div style="display: none">
                                         {% render_field area_form.risk %}
@@ -97,15 +96,15 @@ Oversight Missions
                                         {% render_field area_form.risk %}
                                         </div>
                                     </td>
-                                {% endif %}
+                                {% endif %}                          
                             {% else %}
                                 </td>
                                 &nbsp;
                                 </td>
                             {% endif %}
-                        <td class="area-field" contenteditable="true" field="recommendation" data-id = "{{ area.id }}" >
+                        <td class="area-field" contenteditable="false" field="recommendation" data-id = "{{ area.id }}" >
                             {% if area.recommendation %}
-                            {{ area.recommendation }}
+                            {{ area.recommendation }}                            
                             {% else %}
                             &nbsp;
                             {% endif %}
@@ -113,7 +112,7 @@ Oversight Missions
 
                         <td class="area-field" contenteditable="true" field="comment" data-id = "{{ area.id }}" >
                             {% if area.comment %}
-                            {{ area.comment }}
+                            {{ area.comment }}                            
                             {% else %}
                             &nbsp;
                             {% endif %}
@@ -123,7 +122,7 @@ Oversight Missions
                                     <td class="area-field" contenteditable="false" field="implementation_date" data-id = "{{ area.id }}" class="text-danger">{{ area.implementation_date }}</td>
                                 {% else %}
                                     <td class="area-field" contenteditable="false" field="area_name" data-id = "{{ area.id }}" class="text-success">{{ area.implementation_date }}</td>
-                                {% endif %}
+                                {% endif %}                   
                             {% else %}
                             <td>&nbsp;</td>
                             {% endif %}
@@ -135,7 +134,7 @@ Oversight Missions
                             <button class="edit-btn btn btn-outline-primary btn-sm collapsed" data-toggle="collapse"
                                 data-target="#form-{{ area.id }}" data-id="{{ area.id }}">Edit Area</button>
                             <form id="form-{{ area.id }}" action="{% url "edit_oversight" oversight.id %}" method="POST" class="collapse">
-                                {% csrf_token %}
+                                {% csrf_token %}                              
                                 <div class="row" id="form-{{ area.id }}-data">
                                     <input type="text" name="area_id" value="{{ area.id }}" id="input-{{ area.id }}" hidden>
                                     <input type="text" name="section_id" value="{{ section.id }}" hidden>
@@ -148,7 +147,7 @@ Oversight Missions
                                 <button class="btn btn-info">Update</button>
                             </form>
                         </td>
-
+                        
                         <td style="padding: 0px !important"></td>
                         <td style="padding: 0px !important"></td>
                         <td style="padding: 0px !important"></td>
@@ -183,7 +182,7 @@ Oversight Missions
             },
 
             success: function (response) {
-                console.log(response)
+                console.log(response)    
             }
         });
     }
@@ -197,8 +196,8 @@ Oversight Missions
         $(".edit-btn").on("click", function(){
             if($(this).hasClass("collapsed")){
                 let area_id = $(this).attr("data-id")
-                // console.log(area_id)
-
+                // console.log(area_id)   
+                
                 $.ajax({
                     type: "get",
                     url: "/ajax/area_form",
@@ -261,7 +260,7 @@ Oversight Missions
                     //     area_field.find("div").show();
                     // }
                     saveField(area_id, area_name, text)
-
+                    
                 }, timeout);
             }
         });
