@@ -5,7 +5,7 @@
 
 
 {% block title %}
-Follow up Missions
+Closed Missions
 {% endblock %}
 
 {% block content %}
@@ -15,7 +15,7 @@ Follow up Missions
             <div class="row">
                 <div class="col-md-3">
                     <a class="card-link" style="color: black" data-toggle="collapse" href="#filterForm">
-                        <h4 style="margin-top: 0" class="btn btn-sm btn-block btn-secondary">Filter Follow Up Missions</h4>
+                        <h4 style="margin-top: 0" class="btn btn-sm btn-block btn-secondary">Filter Closed Follow Up Missions</h4>
                     </a>
                 </div>
                 <div class="col-md-6"></div>
@@ -74,8 +74,8 @@ Follow up Missions
                         <td>{{ oversight.country_office }}</td>
                         <td>{{ oversight.business_unit }}</td>
                         <td>
-                            <a href="{% url "edit_follow_up" oversight.id %}"><button
-                                class="btn btn-outline-primary btn-sm">Open</button>
+                            <a href="{% url "view_closed" oversight.id %}"><button
+                                class="btn btn-outline-primary btn-sm">View</button>
                             </a>
                         </td>
                     </tr>

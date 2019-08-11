@@ -154,7 +154,11 @@ Filter Templates
 <script src="{% static "core/data-tables/js/dataTables.bootstrap4.min.js" %}"></script>
 <script>
     $(document).ready(function () {
-        $('#{{  template.id }}').DataTable();
+        $('#{{ template.id }}').DataTable();
+
+        $("#datetimepicker1").datetimepicker({
+          format: 'DD/MM/YYYY HH:mm',
+        });
     });
 </script>
 {% endblock %}

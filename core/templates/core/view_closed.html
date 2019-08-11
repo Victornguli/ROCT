@@ -14,8 +14,8 @@ Edit Follow Up Mission
             <div class="">
             <b class="text-info">Mission Title: {{ oversight.oversight_name }}</b>
                 <div class="d-flex">
-                    <form action="{% url "close" oversight.id %}" class="form-inline">
-                        <button style="margin: 0 !important" class="btn btn-sm btn-outline-dark">Close Mission</button>
+                    <form action="{% url "closed_oversights" %}" class="form-inline">
+                        <button style="margin: 0 !important" class="btn btn-sm btn-outline-dark">Back to closed</button>
                     </form>
                     <form action="{% url "export" oversight.id %}" class="form-inline">
                         <br>
@@ -122,7 +122,7 @@ Edit Follow Up Mission
                             &nbsp;                           
                             {% endif %}
                         </td>
-                        <td class="area-field"  contenteditable="true" field="implementation_comment" data-id = "{{ area.id }}" >
+                        <td class="area-field"  contenteditable="false" field="implementation_comment" data-id = "{{ area.id }}" >
                             {% if area.implementation_comment %}
                             {{ area.implementation_comment }}                         
                             {% else %}
@@ -140,34 +140,6 @@ Edit Follow Up Mission
                             {% endif %}
                         <td></td>
                     </tr>
-
-                    <tr class="mb-4">
-                        <td colspan="7" class="text-left">
-                            <button class="edit-btn btn btn-outline-primary btn-sm collapsed" data-toggle="collapse"
-                                data-target="#form-{{ area.id }}" data-id="{{ area.id }}">Edit Area</button>
-                            <form id="form-{{ area.id }}" action="{% url "edit_oversight" oversight.id %}" method="POST" class="collapse">
-                                {% csrf_token %}                              
-                                <div class="row" id="form-{{ area.id }}-data">
-                                    <input type="text" name="area_id" value="{{ area.id }}" id="input-{{ area.id }}" hidden>
-                                    <input type="text" name="section_id" value="{{ section.id }}" hidden>
-                                    {% for field in area_form %}
-                                    <div class="form-group col-md-4">
-                                        {{ field|as_crispy_field }}
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                                <button class="btn btn-info">Update</button>
-                            </form>
-                        </td>
-                        
-                        <td style="padding: 0px !important"></td>
-                        <td style="padding: 0px !important"></td>
-                        <td style="padding: 0px !important"></td>
-                        <td style="padding: 0px !important"></td>
-                        <td style="padding: 0px !important"></td>
-                        <td style="padding: 0px !important"></td>
-                        <td style="padding: 0px !important"></td>
-                    </tr>
                     {% endif %}
                     {% endfor %}
 
@@ -183,112 +155,12 @@ Edit Follow Up Mission
 <script src="{% static "core/data-tables/js/dataTables.bootstrap4.min.js" %}"></script>
 
 <script>
-    function saveField(area_id, area_name, text, area_field){
-        console.log(area_id+" "+area_name+" "+text);
-        $.ajax({
-            type: "get",
-            url: "/edit/update_inline",
-            data: {
-                area_id : area_id,
-                area_name : area_name,
-                text : text,
-            },
-
-            success: function (response) {
-                setTimeout(function(){
-                    area_field.removeClass("loader");
-                }, 800)
-                console.log(response)    
-            }
-        });
-    }
-
     $(document).ready(function () {
         $('#{{ oversight.id }}').DataTable({
             "targets": 'no-sort',
             "bSort": false,
             "order": []
         });
-        $(".edit-btn").on("click", function(){
-            if($(this).hasClass("collapsed")){
-                let area_id = $(this).attr("data-id")
-                // console.log(area_id)   
-                
-                $.ajax({
-                    type: "get",
-                    url: "/ajax/area_form",
-                    data: {
-                        area_id:area_id,
-                    },
-                    success: function (data, status){
-                        // console.log(data)
-                        let form = $(`#form-${area_id}-data`)
-                        form.find("input[name='area_name']").val(data.area_name)
-                        form.find("textarea[name='expected_controls']").val(data.expected_controls)
-                        form.find("textarea[name='findings']").val(data.findings)
-                        form.find("select[name='risk']").val(data.risk)
-                        form.find("textarea[name='recommendation']").val(data.recommendation)
-                        form.find("textarea[name='comment']").val(data.comment)
-                        form.find("input[name='implementation_date']").val(data.implementation_date)
-                        // let area2 = form.find(`#input-{{ area_id }}`)
-                        console.log(data.expected_controls)
-                    }
-                });
-            }
-        })
-
-        let timer;
-        let timeout = 1000;
-
-        // $(".area-risk").on("click focus", function(){
-        //     let risk = $(this)
-        //     let risk_text = risk.find("span")
-        //     risk.find("div").show()
-        //     let risk_select = risk.find("select")
-        //     risk_select.on("change", function(){
-        //         console.log(risk_select.val())
-        //         risk_text.text(risk_select.val().charAt(0).toUpperCase() + risk_select.val().slice(1))
-        //         let area_name = risk.attr("field")
-        //         let area_id = risk.attr("data-id")
-        //         let text = risk_text.text().charAt(0).toLowerCase() + risk_text.text().slice(1)
-        //         // console.log(area_name + )
-        //         saveField(area_id, area_name, text)
-        //     })
-        //     // console.log(risk_select.val())
-        // })
-
-        // $(".area-risk").on("focusout", function(){
-        //     let risk = $(this).find("div")
-        //     risk.hide()
-        //     console.log(risk.val())
-        // })
-
-        $('.area-field').on("keyup focusout paste", function(){
-            clearTimeout(timer);
-            let area_field = $(this);
-            if (area_field.text()){
-                timer = setTimeout(function(){
-                    let area_id = area_field.attr("data-id")
-                    let area_name = area_field.attr("field")
-                    let text = area_field.text().trim()
-                    // if(area_name == "risk"){
-                    //     console.log(area_name)
-                    //     area_field.find("div").show();
-                    // }
-                    area_field.addClass("loader");
-                    saveField(area_id, area_name, text, area_field)
-                    
-                }, timeout);
-            }
-        });
-
-        // $(".area-field").on("keyup", function(){
-        //     let area_field = $(this).text()
-        //     let area_id = $(this).attr("data-id")
-        //     setTimeout(function(){
-        //         console.log(area_id)
-        //     }, 4000)
-        // })
     });
 </script>
 

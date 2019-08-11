@@ -42,6 +42,11 @@
         .my-nav{
             background-color: #4287f5 !important;
         }
+        .loader{
+            background-image: url("{% static 'core/img/saving.gif' %}");
+            background-repeat: no-repeat;
+            background-position: right top;
+        }
     </style>
     {% endblock %}
 </head>
@@ -57,7 +62,7 @@
                 <div class="navbar-nav ml-auto">
                     <a class="nav-item nav-link active" href="{% url "oversights" %}">Ongoing</a>
                     <a class="nav-item nav-link active" href="{% url "follow_up" %}">Follow up Missions</a>
-                    <a class="nav-item nav-link active" href="#">Reports</a>
+                    <a class="nav-item nav-link active" href="{% url "closed_oversights" %}">Closed</a>
                 </div>
             </div>
         </nav>
