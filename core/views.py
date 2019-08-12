@@ -346,21 +346,16 @@ def editFollowUp(request, oversight_id):
     area_form = EditFollowUpForm
     
     if request.method == "POST":
-        area_form = EditActiveAreaForm(request.POST)
+        area_form = EditFollowUpForm(request.POST)
         if area_form.is_valid():
-            findings = area_form.cleaned_data.get("findings")
-            risk = area_form.cleaned_data.get("risk")
-            recommendation = area_form.cleaned_data.get("recommendation")
-            comment = area_form.cleaned_data.get("comment")
-            date = area_form.cleaned_data.get("implementation_date")
+            implementation_comment = area_form.cleaned_data.get("implementation_comment")
             area = Area.objects.get(pk=request.POST.copy()["area_id"])            
             section = Section.objects.get(pk=request.POST.copy()["section_id"])
             
             #Update Area
-            Area.objects.filter(pk=request.POST.copy()["area_id"]).update(findings=findings, risk=risk, recommendation=recommendation, comment=comment, implementation_date=date)
+            Area.objects.filter(pk=request.POST.copy()["area_id"]).update(implementation_comment=implementation_comment)
 
-            print(findings, risk, recommendation, comment, section, area)
-            return redirect("edit_oversight", oversight_id=oversight_id)
+            return redirect("edit_follow_up", oversight_id=oversight_id)
             
     context = {
         "oversight": oversight,

@@ -123,7 +123,7 @@ Edit Follow Up Mission
                                 {% if today > area.implementation_date %}
                                     <td class="area-field" contenteditable="false" field="implementation_date" data-id = "{{ area.id }}" class="text-danger">{{ area.implementation_date }}</td>
                                 {% else %}
-                                    <td class="area-field" contenteditable="false" field="area_name" data-id = "{{ area.id }}" class="text-success">{{ area.implementation_date }}</td>
+                                    <td class="area-field" contenteditable="false" field="implementation_date" data-id = "{{ area.id }}" class="text-success">{{ area.implementation_date }}</td>
                                 {% endif %}                   
                             {% else %}
                             <td>&nbsp;</td>
@@ -132,10 +132,10 @@ Edit Follow Up Mission
                     </tr>
 
                     <tr class="mb-4">
-                        <td colspan="7" class="text-left">
+                        <td colspan="8" class="text-left">
                             <button class="edit-btn btn btn-outline-primary btn-sm collapsed" data-toggle="collapse"
                                 data-target="#form-{{ area.id }}" data-id="{{ area.id }}">Edit Area</button>
-                            <form id="form-{{ area.id }}" action="{% url "edit_oversight" oversight.id %}" method="POST" class="collapse">
+                            <form id="form-{{ area.id }}" action="{% url "edit_follow_up" oversight.id %}" method="POST" class="collapse">
                                 {% csrf_token %}                              
                                 <div class="row" id="form-{{ area.id }}-data">
                                     <input type="text" name="area_id" value="{{ area.id }}" id="input-{{ area.id }}" hidden>

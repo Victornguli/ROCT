@@ -5,42 +5,29 @@
 
 
 {% block title %}
-Filter Templates
+Edit Templates
 {% endblock %}
 
 {% block content %}
-<style>
-    table {
-        empty-cells: hide;
-    }
-    tr{
-        text-align: left;
-    }
-    td {
-        vertical-align: top;
-        text-align: right;
-        padding-right: 5px;
-        /* horizontal-align:  right; */
-    }
-</style>
-<div class="container">
+
+<div class="container-fluid">
     <div class="card mt-3 mb-4">
         <div class="card-header"> 
-            <h4><b class="text-info">Template Title: {{ template.template_name }}</b></h4>
+            <b class="text-info">Template Title: {{ template.template_name }}</b>
             <div class="">
                 <form action="{% url "start" template.id %}" class="form-inline">
                     <input class="form-check-input" type="checkbox" name="save_template" value="yes" id="is_template">
-                    <label class="form-check-label" for="is_template">
+                    <label class="form-check-label mr-2" for="is_template">
                     Commit as a template
                     </label>
                     <br>
-                    <button class="btn btn-outline-dark m-3">Start Oversight Mission</button>
+                    <button style="margin: 0 !important" class="btn btn-sm btn-outline-dark m-3">Start Oversight Mission</button>
                 </form>
             </div>
         </div>
         <div class="card-body">
-            <table id="{{ template.id }}" data-order="[]" class="display table-sm table-bordered w-100" >
-                <thead>
+            <table id="{{ template.id }}" data-order="[]" class="table-sm table-bordered w-100" >
+                <thead class="table-head table-secondary">
                     <tr>
                         <th>Area </th>
                         <th>Expected Controls</th>
@@ -54,46 +41,44 @@ Filter Templates
                 <tbody>
                     {% for section in sections %}
                     <tr>
-                        <td colspan="7">
-                            <div class="alert alert-info mb-1 text-left" style="padding: 5px !important">{{ section.section_name }}
-                            </div>
-                            <div class="text-center mb-3 mt-0">
-                            <button class="btn btn-outline-primary btn-sm" data-toggle="collapse" data-target="#form-{{ section.id }}">Add Area</button>
-                            </div>
+                        <td colspan="7" class="alert alert-info">
+                            {{ section.section_name }}
                         </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
                     </tr>
                     {% for area in areas %}
                         {% if area.section == section %}
                         <tr>
-                        <td>{{ area.area_name }}</td>
-                        <td>{{ area.expected_controls }}</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
+                        <td class="area-field" contenteditable="true" field="area_name" data-id = "{{ area.id }}">{{ area.area_name }}</td>
+                        <td class="area-field" contenteditable="true" field="expected_controls" data-id = "{{ area.id }}">{{ area.expected_controls }}</td>
+                        <td class="area-field" contenteditable="false" field="findings" data-id = "{{ area.id }}" >&nbsp;</td>
+                        <td class="area-field" contenteditable="false" field="risk" data-id = "{{ area.id }}" >&nbsp;</td>
+                        <td class="area-field" contenteditable="false" field="recommendation" data-id = "{{ area.id }}" >&nbsp;</td>
+                        <td class="area-field" contenteditable="false" field="comment" data-id = "{{ area.id }}" >&nbsp;</td>
+                        <td class="area-field" contenteditable="false" field="implementation_date" data-id = "{{ area.id }}" >&nbsp;</td>
+                        <td></td>
                         </tr>
                         {% else %}
                         <tr>
-                            <td></td>
-                            <td><td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td style="padding: 0px !important"></td>
+                            <td style="padding: 0px !important"></td>
+                            <td style="padding: 0px !important"></td>
+                            <td style="padding: 0px !important"></td>
+                            <td style="padding: 0px !important"></td>
+                            <td style="padding: 0px !important"></td>
+                            <td style="padding: 0px !important"></td>
                         </tr>
                         {% endif %}
                         
                     {% endfor %}
                     <tr>
-                        <td colspan="7" class="text-center">
+                        <td colspan="7" class="text-left">
+                            <button class="btn btn-outline-primary btn-sm" data-toggle="collapse" data-target="#form-{{ section.id }}">Add Area</button>
                             <form id="form-{{ section.id }}" action="{% url "edit_template" template.id %}" method="POST" class="collapse hide">
                                 {% csrf_token %}
                                 <div class="row">
@@ -104,20 +89,20 @@ Filter Templates
                                     </div>
                                     {% endfor %}
                                 </div>
-                                <button class="btn btn-block btn-primary">Submit</button>
+                                <button class="btn btn-sm btn-block btn-primary">Submit</button>
                             </form>
                         </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
                     </tr>
                     {% endfor %}
                     <tr>
                         <td colspan="7" class="text-center p-2">
-                            <button class="btn btn-warning btn-block" data-toggle="collapse"
+                            <button class="btn btn-sm btn-warning btn-block" data-toggle="collapse"
                                 data-target="#add-section-{{ template.id }}">Add Section</button>
                             <form id="add-section-{{ template.id }}" action="{% url "edit_template" template.id %}" method="POST" class="collapse text-left">
                                 {% csrf_token %}
@@ -136,12 +121,12 @@ Filter Templates
 
                             </form>
                         </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
                     </tr>
                 </tbody>
             </table>
@@ -152,13 +137,127 @@ Filter Templates
 <script src="{% static "core/js/bootstrap.min.js" %}"></script>
 <script src="{% static "core/js/datatables.min.js" %}"></script>
 <script src="{% static "core/data-tables/js/dataTables.bootstrap4.min.js" %}"></script>
-<script>
-    $(document).ready(function () {
-        $('#{{ template.id }}').DataTable();
 
-        $("#datetimepicker1").datetimepicker({
-          format: 'DD/MM/YYYY HH:mm',
+<script>
+    function saveField(area_id, area_name, text, area_field){
+        // console.log(area_id+" "+area_name+" "+text);
+        $.ajax({
+            type: "get",
+            url: "/edit/update_inline",
+            data: {
+                area_id : area_id,
+                area_name : area_name,
+                text : text,
+            },
+
+            success: function (response) {
+                setTimeout(function(){
+                    area_field.removeClass("loader");
+                }, 800)
+                console.log(response)    
+            }
         });
+    }
+
+    $(document).ready(function () {
+        $('#{{ template.id }}').DataTable({
+            "targets": 'no-sort',
+            "bSort": false,
+            "order": []
+        });
+
+        $(".edit-btn").on("click", function(){
+            if($(this).hasClass("collapsed")){
+                let area_id = $(this).attr("data-id")
+                // console.log(area_id)   
+                
+                $.ajax({
+                    type: "get",
+                    url: "/ajax/area_form",
+                    data: {
+                        area_id:area_id,
+                    },
+                    success: function (data, status){
+                        // console.log(data)
+                        let form = $(`#form-${area_id}-data`)
+                        console.log(form.find("input[name*='area_name']").val())
+                        form.find("input[name*='area_name']").val(data.area_name)
+                        form.find("textarea[name*='expected_controls']").val(data.expected_controls)
+                        form.find("textarea[name*='findings']").val(data.findings)
+                        form.find("select[name*='risk']").val(data.risk)
+                        form.find("textarea[name*='recommendation']").val(data.recommendation)
+                        form.find("textarea[name*='comment']").val(data.comment)
+                        form.find("input[name*='implementation_date']").val(data.implementation_date)
+                        // let area2 = form.find(`#input-{{ area_id }}`)
+                    }
+                });
+            }
+        })
+
+        let timer;
+        let timeout = 1000;
+
+        // $(".area-risk").on("click focus", function(){
+        //     let risk = $(this)
+        //     let risk_text = risk.find("span")
+        //     risk.find("div").show()
+        //     let risk_select = risk.find("select")
+        //     risk_select.on("change", function(){
+        //         console.log(risk_select.val())
+        //         risk_text.text(risk_select.val().charAt(0).toUpperCase() + risk_select.val().slice(1))
+        //         let area_name = risk.attr("field")
+        //         let area_id = risk.attr("data-id")
+        //         let text = risk_text.text().charAt(0).toLowerCase() + risk_text.text().slice(1)
+        //         // console.log(area_name + )
+        //         saveField(area_id, area_name, text)
+        //     })
+        //     // console.log(risk_select.val())
+        // })
+
+        // $(".area-risk").on("focusout", function(){
+        //     let risk = $(this).find("div")
+        //     risk.hide()
+        //     console.log(risk.val())
+        // })
+
+        $(".area-field").on("focus", function(){
+            console.log("focused");
+            let area_field = $(this);
+            if(area_field.text().match(/\w/) == null){
+                $(this).html("");
+            }else{
+                //Nothing Continue Editing...
+            }
+        })
+
+        $('.area-field').on("keyup focusout paste", function(){
+            clearTimeout(timer);
+            let area_field = $(this);
+                timer = setTimeout(function(){
+                    let area_id = area_field.attr("data-id")
+                    let area_name = area_field.attr("field")
+                    let text = area_field.text().trim()
+                    console.log(text)
+                    // area_field.text(text)
+                    // if(area_name == "risk"){
+                    //     console.log(area_name)
+                    //     area_field.find("div").show();
+                    // }
+                    area_field.addClass("loader");
+                    saveField(area_id, area_name, text, area_field)
+                    
+                }, timeout);
+        });
+
+        $(".area-field").on("focusout", function(){
+            let area_field = $(this).text()
+            if(area_field == ""){
+                $(this).html('&nbsp;');
+            }else{
+
+            }
+        })
     });
 </script>
+
 {% endblock %}
