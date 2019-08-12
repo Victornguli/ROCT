@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django_filters",
     "widget_tweaks",
     "import_export",
+    "tempus_dominus",
 ]
 
 MIDDLEWARE = [

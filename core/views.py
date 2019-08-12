@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 from django.utils.encoding import smart_str
+from django.forms import formset_factory
 
 import csv
 import datetime
@@ -222,29 +223,48 @@ def editOversight(request, oversight_id):
     areas = oversight.areas.all()
     #forms
     area_form = EditActiveAreaForm
-    
+    AreaFormSet = formset_factory(EditActiveAreaForm, extra=areas.count())
+    formset = AreaFormSet()
     if request.method == "POST":
-        area_form = EditActiveAreaForm(request.POST)
-        if area_form.is_valid():
-            findings = area_form.cleaned_data.get("findings")
-            risk = area_form.cleaned_data.get("risk")
-            recommendation = area_form.cleaned_data.get("recommendation")
-            comment = area_form.cleaned_data.get("comment")
-            date = area_form.cleaned_data.get("implementation_date")
-            area = Area.objects.get(pk=request.POST.copy()["area_id"])            
-            section = Section.objects.get(pk=request.POST.copy()["section_id"])
-            
-            #Update Area
-            Area.objects.filter(pk=request.POST.copy()["area_id"]).update(findings=findings, risk=risk, recommendation=recommendation, comment=comment, implementation_date=date)
+        formsets = AreaFormSet(request.POST)
+        # area = Area.objects.get(pk=request.POST.copy()["area_id"])            
+        # print(area_formsets)
+        if formsets.is_valid():
+            for formset in formsets:
+                if formset.cleaned_data:
+                    area_name = formset.cleaned_data.get("area_name")
+                    expected_controls = formset.cleaned_data.get("expected_controls")
+                    findings = formset.cleaned_data.get("findings")
+                    risk = formset.cleaned_data.get("risk")
+                    recommendation = formset.cleaned_data.get("recommendation")
+                    comment = formset.cleaned_data.get("comment")
+                    date = formset.cleaned_data.get("implementation_date")
+                    area = Area.objects.get(pk=request.POST.copy()["area_id"])            
+                    section = Section.objects.get(pk=request.POST.copy()["section_id"])
+                    
+                    # #Update Area
+                    Area.objects.filter(pk=request.POST.copy()["area_id"]).update(
+                        area_name=area_name, expected_controls=expected_controls,
+                        findings=findings, risk=risk, recommendation=recommendation, 
+                        comment=comment, implementation_date=date)
 
-            print(findings, risk, recommendation, comment, section, area)
+            # print(findings, risk, recommendation, comment, section, area)
             return redirect("edit_oversight", oversight_id=oversight_id)
-            
+
+    # for form in formset:
+    #     print(form)
+
+
     context = {
         "oversight": oversight,
         "sections": sections,
         "areas": areas,
-        "area_form": area_form,
+        "areas_and_areaforms": list(zip(
+            areas,
+            formset,
+        )),
+        "formset":formset,
+        "area_form_media":area_form,
         "today": today,
     }
 
