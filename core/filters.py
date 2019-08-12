@@ -41,4 +41,3 @@ class FollowupFilter(django_filters.FilterSet):
     class Meta:
         model = Oversight
         fields = ["close_year", "regional_office", "country_office", "business_unit"]
-

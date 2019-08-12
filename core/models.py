@@ -1,6 +1,6 @@
 from django.db import models
 
-# Create your models here.
+
 class RO(models.Model):
     ro_name = models.CharField(max_length=100, verbose_name="Regional office name")
 
@@ -60,7 +60,8 @@ class Area(models.Model):
     section = models.ForeignKey("Section", verbose_name="Section", on_delete=models.CASCADE, null=True)
     # template = models.ManyToManyField("Template", verbose_name="Template",null=True)
     # oversight = models.ManyToManyField("OversightReport", verbose_name="OVersight Report", null=True)
-
+    implementation_comment = models.CharField(max_length=1000, null=True, verbose_name = "Implementation Comment")
+    
     class Meta:
         verbose_name = "Area"
 
@@ -102,8 +103,8 @@ class Oversight(models.Model):
     business_unit = models.ForeignKey("BU", verbose_name="Business Unit", on_delete=models.CASCADE)
     areas = models.ManyToManyField("Area", verbose_name="Areas")
     sections = models.ManyToManyField("Section", verbose_name="Sections")
-    #Add User relationship
-
+    # Add User relationship
+    
     class Meta:
         verbose_name = "Oversight"
 

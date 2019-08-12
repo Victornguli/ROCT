@@ -6,7 +6,7 @@
 {% block title %}
 Oversight Missions
 {% endblock %}
-
+<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 {% block content %}
 
 <div class="container-fluid">
@@ -196,6 +196,11 @@ Oversight Missions
             "bSort": false,
             "order": []
         });
+
+        $("#datetimepicker1").datetimepicker({
+          format: 'DD/MM/YYYY HH:mm',
+        });
+
         $(".edit-btn").on("click", function(){
             if($(this).hasClass("collapsed")){
                 let area_id = $(this).attr("data-id")

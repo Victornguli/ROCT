@@ -8,7 +8,7 @@ import datetime
 from .resources import OversightResource
 from .models import Template, Area, Section, RO, CO, BU, Oversight
 from .filters import TemplateFilter, OversightFilter
-from .forms import AddAreaForm, AddSectionForm, AddTemplateForm, AddOversightForm, EditActiveAreaForm
+from .forms import AddAreaForm, AddSectionForm, AddTemplateForm, AddOversightForm, EditActiveAreaForm, EditFollowUpForm
 # Create your views here.
 
 
@@ -121,7 +121,9 @@ def defineTemplate(request):
             template_name = form.cleaned_data.get("template_name")
             
             #Create new Template
-            template = Template.objects.create(template_name=template_name, regional_office =regional_office, country_office=country_office, business_unit = business_unit)
+            template = Template.objects.create(
+                template_name=template_name, regional_office=regional_office, 
+                country_office=country_office, business_unit = business_unit)
             # print (regional_office, country_office, business_unit, template_name)
             return redirect("edit_template", template_id = template.id)
 
@@ -285,6 +287,8 @@ def updateInline(request):
             area = Area.objects.filter(pk=area_id).update(recommendation=text)
         elif area_name == "comment":
             area = Area.objects.filter(pk=area_id).update(comment=text)
+        elif area_name == "implementation_comment":
+            area = Area.objects.filter(pk=area_id).update(implementation_comment=text)            
         elif area_name == "implementation_date":
             # area = Area.objects.filter(pk=area_id).update(implementation_date=text)
             pass
@@ -319,7 +323,7 @@ def editFollowUp(request, oversight_id):
     sections = oversight.sections.all()
     areas = oversight.areas.all()
     #forms
-    area_form = EditActiveAreaForm
+    area_form = EditFollowUpForm
     
     if request.method == "POST":
         area_form = EditActiveAreaForm(request.POST)
@@ -347,4 +351,32 @@ def editFollowUp(request, oversight_id):
     }
 
     return render(request, "core/edit_followup.html", context)    
+
+
+def close_oversight(request, oversight_id):
+    oversight = Oversight.objects.filter(pk=oversight_id).update(status="closed")
+    return redirect ("follow_up")
+
+
+def closed_oversights(request):
+    closed_oversights = Oversight.objects.filter(status="closed")
+    oversights = OversightFilter(queryset=closed_oversights)
+    context = {
+        "oversights":oversights,
+    }
+
+    return render(request, "core/closed.html", context)
+
+
+def view_closed_oversight(request, oversight_id):
+    oversight = Oversight.objects.get(pk=oversight_id)
+    sections = Section.objects.filter(oversight__id = oversight_id)
+    areas = Area.objects.filter(oversight__id=oversight_id)
+    context = {
+        "oversight":oversight,
+        "sections":sections,
+        "areas":areas,
+    }
+
+    return render(request, "core/view_closed.html", context)
 

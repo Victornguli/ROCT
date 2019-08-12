@@ -1,22 +1,24 @@
 from django import forms
 from django.forms import ModelForm
-from .models import RO,CO,BU,Template,Area
+from .models import RO, CO, BU, Template, Area
 
 
 class DateInput(forms.DateInput):
     input_type = 'date'
 
 
-
 class AddAreaForm(forms.Form):
-    area_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'placeholder':'Area Name'}), help_text="Type in the name of the area")
-    expected_controls = forms.CharField(max_length=1000, required=True, widget=forms.Textarea(attrs={'placeholder':'Expected Controls',"rows":"3", "cols":"2"}))
+    area_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(
+        attrs={'placeholder':'Area Name'}), help_text="Type in the name of the area")
+    expected_controls = forms.CharField(max_length=1000, required=True, widget=forms.Textarea(
+        attrs={'placeholder':'Expected Controls',"rows":"3", "cols":"2"}))
     # findings = forms.CharField(max_length=100, required=False, widget=forms.Textarea(attrs={'placeholder':'Findings'}), help_text="Type in the name of the area")
     # risk = forms.ModelChoiceField(required=False, widget=forms.Select(), help_text="Type in the name of the area")
 
     # class Meta:
     #     model = Area
     #     fields = ["risk"]
+
 
 class EditActiveAreaForm(forms.Form):
     risk_choices = (
@@ -25,14 +27,23 @@ class EditActiveAreaForm(forms.Form):
         ("low", "Low"),
     )
     
-    area_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'placeholder':'Area Name'}), help_text="Type in the name of the area")
-    expected_controls = forms.CharField(max_length=1000, required=True, widget=forms.Textarea(attrs={'placeholder':'Expected Controls',"rows":"4", "cols":"2"}))
-
-    findings = forms.CharField(max_length=1000, required=False, widget=forms.Textarea(attrs={'placeholder':'Findings', "rows":"4", "cols":"2"}), help_text="Type in the name of the area")
+    area_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(
+        attrs={'placeholder': 'Area Name'}), help_text="Type in the name of the area")
+    expected_controls = forms.CharField(max_length=1000, required=True, widget=forms.Textarea(
+        attrs={'placeholder': 'Expected Controls', "rows": "4", "cols": "2"}))
+    findings = forms.CharField(max_length=1000, required=False, widget=forms.Textarea(
+        attrs={'placeholder': 'Findings', "rows":"4", "cols": "2"}), help_text="Type in the name of the area")
     risk = forms.ChoiceField(choices=risk_choices, required=False, widget=forms.Select(), help_text="Select Risk")
-    recommendation = forms.CharField(max_length=1000, required=False, widget=forms.Textarea(attrs={'placeholder':'Recommendations', "rows":"4", "cols":"2"}), help_text="Enter any recommendations")
-    comment = forms.CharField(max_length=1000, required=False, widget=forms.Textarea(attrs={'placeholder':'Management Comments', "rows":"4", "cols":"2"}), help_text="Enter Management Comment")
-    implementation_date = forms.DateField(required=False, widget=DateInput())
+    recommendation = forms.CharField(max_length=1000, required=False, widget=forms.Textarea(
+        attrs={'placeholder': 'Recommendations', "rows": "4", "cols": "2"}), help_text="Enter any recommendations")
+    comment = forms.CharField(max_length=1000, required=False, widget=forms.Textarea(
+        attrs={'placeholder': 'Management Comments', "rows": "4", "cols": "2"}), help_text="Enter Management Comment")
+    implementation_date = forms.DateField(required=False, input_formats=['%d/%m/%Y %H:%M'], widget=forms.DateInput(
+        attrs={
+            'class': 'form-control datetimepicker-input',
+            'data-target': '#datetimepicker1'
+        })
+    )
 
     class Meta:
         model = Area
@@ -40,7 +51,8 @@ class EditActiveAreaForm(forms.Form):
 
 
 class AddSectionForm(forms.Form):
-    section_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'placeholder':'Section Name'}), help_text="Type in the name of the section")
+    section_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(
+        attrs={'placeholder':'Section Name'}), help_text="Type in the name of the section")
 
 
 class AddTemplateForm(forms.Form):
@@ -49,10 +61,13 @@ class AddTemplateForm(forms.Form):
     business_unit = forms.ModelChoiceField(queryset=BU.objects.all(), widget=forms.Select)
     template_name = forms.CharField(max_length=200, required=True)
 
+
 class AddOversightForm(forms.Form):
-    oversight_name = forms.CharField(max_length=200, required=True, widget=forms.TextInput(attrs={'placeholder':'Oversight Name'}), help_text="Type in the name of this Oversight Mission")
+    oversight_name = forms.CharField(max_length=200, required=True, widget=forms.TextInput(
+        attrs={'placeholder':'Oversight Name'}), help_text="Type in the name of this Oversight Mission")
     close_year = forms.DateField(widget=forms.SelectDateWidget())
 
-class EditFollowUp(forms.Form):
-    implementation_comment = forms.CharField(max_length=1000, required=True, widget=forms.TextInput(attrs={'placeholder':'Implementation Comments'}))
-    implementation_date = forms.DateField(required=False)
+
+class EditFollowUpForm(forms.Form):
+    implementation_comment = forms.CharField(max_length=1000, required=True, widget=forms.Textarea(
+        attrs={'placeholder': 'Findings', "rows":"4", "cols": "2"}), help_text="Type in the implementation comments")

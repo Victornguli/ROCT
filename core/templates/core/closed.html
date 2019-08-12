@@ -1,0 +1,103 @@
+{% extends "core/base.html" %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% load static %}
+
+
+{% block title %}
+Closed Missions
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card m-auto">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-3">
+                    <a class="card-link" style="color: black" data-toggle="collapse" href="#filterForm">
+                        <h4 style="margin-top: 0" class="btn btn-sm btn-block btn-secondary">Filter Closed Follow Up Missions</h4>
+                    </a>
+                </div>
+                <div class="col-md-6"></div>
+                <hr>
+            </div>
+        </div>
+
+        <form class="collapse hide" method="get" id="filterForm">
+                <div class="bg-light p-2">
+                    <div class="row">
+                        <div class="form-group col-sm-4 col-md-3">
+                            {{ oversights.form.close_year.label_tag }}
+                            {% render_field oversights.form.close_year class="form-control" %}
+                        </div>
+
+                        <div class="form-group col-sm-4 col-md-3">
+                            {{ oversights.form.regional_office.label_tag }}
+                            {% render_field oversights.form.regional_office class="form-control" %}
+                        </div>
+
+                        <div class="form-group col-sm-4 col-md-3">
+                            {{ oversights.form.country_office.label_tag }}
+                            {% render_field oversights.form.country_office class="form-control" %}
+                        </div>
+
+                        <div class="form-group col-sm-4 col-md-3">
+                            {{ oversights.form.business_unit.label_tag }}
+                            {% render_field oversights.form.business_unit class="form-control" %}
+                        </div>
+
+                    </div>
+                    <button type="submit" class="btn btn-block btn-primary">
+                        <span class="glyphicon glyphicon-search"></span> Search
+                    </button>
+                </div>
+            </form>
+    </div>
+
+    <div class="card mt-2">
+        <div class="card-body">
+            <table id="template" class="table table-sm table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Overisght Title</th>
+                        <th>Regional Office</th>
+                        <th>Country Office</th>
+                        <th>Business Unit</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for oversight in oversights.qs %}
+                    <tr>
+                        <td>{{ oversight.oversight_name }}</td>
+                        <td>{{ oversight.regional_office }}</td>
+                        <td>{{ oversight.country_office }}</td>
+                        <td>{{ oversight.business_unit }}</td>
+                        <td>
+                            <a href="{% url "view_closed" oversight.id %}"><button
+                                class="btn btn-outline-primary btn-sm">View</button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+    </div>
+
+    <script src="{% static "core/js/jquery.min.js" %}"></script>
+    <script src="{% static "core/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "core/js/datatables.min.js" %}"></script>
+    <script src="{% static "core/data-tables/js/dataTables.bootstrap4.min.js" %}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#template').DataTable({
+                "targets": 'no-sort',
+                "bSort": false,
+                "order": []
+            });
+        });
+    </script>
+    {% block javascript %}
+    {% endblock %}
+{% endblock %}

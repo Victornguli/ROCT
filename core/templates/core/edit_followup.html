@@ -14,8 +14,8 @@ Edit Follow Up Mission
             <div class="">
             <b class="text-info">Mission Title: {{ oversight.oversight_name }}</b>
                 <div class="d-flex">
-                    <form action="{% url "submit_oversight" oversight.id %}" class="form-inline">
-                        <button style="margin: 0 !important" class="btn btn-sm btn-outline-dark">Close</button>
+                    <form action="{% url "close" oversight.id %}" class="form-inline">
+                        <button style="margin: 0 !important" class="btn btn-sm btn-outline-dark">Close Mission</button>
                     </form>
                     <form action="{% url "export" oversight.id %}" class="form-inline">
                         <br>
@@ -34,15 +34,20 @@ Edit Follow Up Mission
                         <th>Risk Severity</th>
                         <th>Recommendations</th>
                         <th>Management Comment</th>
+                        <th>Implemetantion Comment</th>
                         <th>Target Implementation Date</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for section in sections %}
                     <tr>
-                        <td colspan="7" class="alert alert-info">
+                        <td colspan="8" class="alert alert-info">
+                            <div>
                             {{ section.section_name }}
+                            </div>
+
                         </td>
+                        <td style="padding: 0px !important"></td>
                         <td style="padding: 0px !important"></td>
                         <td style="padding: 0px !important"></td>
                         <td style="padding: 0px !important"></td>
@@ -110,9 +115,16 @@ Edit Follow Up Mission
                             {% endif %}
                         </td>
 
-                        <td class="area-field" contenteditable="true" field="comment" data-id = "{{ area.id }}" >
+                        <td class="area-field" contenteditable="false" field="comment" data-id = "{{ area.id }}" >
                             {% if area.comment %}
                             {{ area.comment }}                            
+                            {% else %}
+                            &nbsp;                           
+                            {% endif %}
+                        </td>
+                        <td class="area-field"  contenteditable="true" field="implementation_comment" data-id = "{{ area.id }}" >
+                            {% if area.implementation_comment %}
+                            {{ area.implementation_comment }}                         
                             {% else %}
                             &nbsp;
                             {% endif %}
@@ -154,6 +166,7 @@ Edit Follow Up Mission
                         <td style="padding: 0px !important"></td>
                         <td style="padding: 0px !important"></td>
                         <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
                     </tr>
                     {% endif %}
                     {% endfor %}
@@ -170,8 +183,8 @@ Edit Follow Up Mission
 <script src="{% static "core/data-tables/js/dataTables.bootstrap4.min.js" %}"></script>
 
 <script>
-    function saveField(area_id, area_name, text){
-        // console.log(area_id+" "+area_name+" "+text);
+    function saveField(area_id, area_name, text, area_field){
+        console.log(area_id+" "+area_name+" "+text);
         $.ajax({
             type: "get",
             url: "/edit/update_inline",
@@ -182,6 +195,9 @@ Edit Follow Up Mission
             },
 
             success: function (response) {
+                setTimeout(function(){
+                    area_field.removeClass("loader");
+                }, 800)
                 console.log(response)    
             }
         });
@@ -222,7 +238,7 @@ Edit Follow Up Mission
         })
 
         let timer;
-        let timeout = 100;
+        let timeout = 1000;
 
         // $(".area-risk").on("click focus", function(){
         //     let risk = $(this)
@@ -259,7 +275,8 @@ Edit Follow Up Mission
                     //     console.log(area_name)
                     //     area_field.find("div").show();
                     // }
-                    saveField(area_id, area_name, text)
+                    area_field.addClass("loader");
+                    saveField(area_id, area_name, text, area_field)
                     
                 }, timeout);
             }
