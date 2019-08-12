@@ -61,6 +61,7 @@ class Area(models.Model):
     # template = models.ManyToManyField("Template", verbose_name="Template",null=True)
     # oversight = models.ManyToManyField("OversightReport", verbose_name="OVersight Report", null=True)
     implementation_comment = models.CharField(max_length=1000, null=True, verbose_name = "Implementation Comment")
+
     
     class Meta:
         verbose_name = "Area"
@@ -95,7 +96,7 @@ class Oversight(models.Model):
     
     oversight_name = models.CharField(max_length=100, verbose_name="Oversight Name")
     template = models.ForeignKey("Template", verbose_name="Template", null=True, on_delete=models.CASCADE)
-    close_year = models.DateTimeField(auto_now=False, auto_now_add=False, null=True, verbose_name="Year")
+    close_year = models.DateField(auto_now=False, auto_now_add=False, null=True, verbose_name="Year")
     status = models.CharField(max_length=50, choices=oversight_status, verbose_name="Status")
 
     regional_office = models.ForeignKey("RO", verbose_name="Regional Office", on_delete=models.CASCADE)
@@ -110,3 +111,4 @@ class Oversight(models.Model):
 
     def __str__(self):
         return self.oversight_name
+    

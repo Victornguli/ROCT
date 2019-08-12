@@ -6,7 +6,6 @@
 {% block title %}
 Edit Follow Up Mission
 {% endblock %}
-
 {% block content %}
 <div class="container-fluid">
     <div class="card">
@@ -83,23 +82,14 @@ Edit Follow Up Mission
                                 {% if area.risk == "high" %}
                                     <td class="area-risk bg-danger text-light" contenteditable="false" field="risk" data-id = "{{ area.id }}">
                                         <span>{{ area.risk|capfirst }}</span>
-                                        <div style="display: none">
-                                        {% render_field area_form.risk %}
-                                        </div>
                                     </td>
                                 {% elif area.risk == "medium" %}
                                     <td class="area-risk bg-warning text-light" contenteditable="false" field="risk" data-id = "{{ area.id }}">   
                                         <span>{{ area.risk|capfirst }}</span>
-                                        <div style="display: none">
-                                        {% render_field area_form.risk %}
-                                        </div>
                                     </td>
                                 {% else %}
                                     <td class="area-risk bg-success text-light" contenteditable="false" field="risk" data-id = "{{ area.id }}">
                                         <span>{{ area.risk|capfirst }}</span>
-                                        <div style="display: none">
-                                        {% render_field area_form.risk %}
-                                        </div>
                                     </td>
                                 {% endif %}                          
                             {% else %}
@@ -263,10 +253,19 @@ Edit Follow Up Mission
         //     console.log(risk.val())
         // })
 
+        $(".area-field").on("focus", function(){
+            console.log("focused");
+            let area_field = $(this);
+            if(area_field.text().match(/\w/) == null){
+                $(this).html("");
+            }else{
+                //Nothing Continue Editing...
+            }
+        })
+
         $('.area-field').on("keyup focusout paste", function(){
             clearTimeout(timer);
             let area_field = $(this);
-            if (area_field.text()){
                 timer = setTimeout(function(){
                     let area_id = area_field.attr("data-id")
                     let area_name = area_field.attr("field")
@@ -279,16 +278,16 @@ Edit Follow Up Mission
                     saveField(area_id, area_name, text, area_field)
                     
                 }, timeout);
-            }
         });
 
-        // $(".area-field").on("keyup", function(){
-        //     let area_field = $(this).text()
-        //     let area_id = $(this).attr("data-id")
-        //     setTimeout(function(){
-        //         console.log(area_id)
-        //     }, 4000)
-        // })
+        $(".area-field").on("focusout", function(){
+            let area_field = $(this).text()
+            if(area_field == ""){
+                $(this).html('&nbsp;');
+            }else{
+
+            }
+        })
     });
 </script>
 
