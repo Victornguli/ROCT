@@ -60,7 +60,7 @@
 
 <body>
         <nav class="navbar my-nav navbar-expand-lg navbar-dark bg-light mb-3">
-            <a class="navbar-brand" href="{% url "filter_templates" %}">Home</a>
+            <a class="navbar-brand" href="{% url "reports" %}">Home</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -70,6 +70,7 @@
                     <a class="nav-item nav-link active" href="{% url "oversights" %}">Ongoing</a>
                     <a class="nav-item nav-link active" href="{% url "follow_up" %}">Follow up Missions</a>
                     <a class="nav-item nav-link active" href="{% url "closed_oversights" %}">Closed</a>
+                    <a class="nav-item nav-link active" href="{% url "filter_templates" %}">Templates</a>
                 </div>
             </div>
         </nav>

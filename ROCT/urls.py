@@ -20,7 +20,8 @@ from core import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', filterTemplates ,name="filter_templates"),
+    path('', views.reports ,name="reports"),
+    path('templates/', filterTemplates ,name="filter_templates"),
     path('load/<int:template_id>',loadTemplate,name="load_template"),
     path('start/<int:template_id>',startOversight,name="start"),
     path('define', defineTemplate ,name="define_template"),
@@ -28,6 +29,7 @@ urlpatterns = [
     path('oversights/',ongoingOversight,name="oversights"),
     path('follow-up/',filterFollowUp,name="follow_up"),
     path('edit-follow-up/<int:oversight_id>',editFollowUp,name="edit_follow_up"),
+    path('ajax/edit/',views.edit_oversight_ajax,name="edit_area"),    
     path('submit-oversight/<int:oversight_id>',submitOversight,name="submit_oversight"),
     path('edit-oversight/<int:oversight_id>',editOversight,name="edit_oversight"),
     path('ajax/area_form',renderAreaForm ,name="render_area"),

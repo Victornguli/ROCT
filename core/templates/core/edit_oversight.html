@@ -61,7 +61,7 @@
 
                     {% for area in areas %}
                     {% if area.section == section %}
-                    <tr>
+                    <tr id="area-{{ area.id }}">
                         <td class="area-field" contenteditable="true" field="area_name" data-id = "{{ area.id }}" >
                             {% if area.area_name %}
                             {{ area.area_name }}
@@ -155,7 +155,7 @@
                                 {% endfor %}
 
                                 </div>
-                                <button class="btn btn-info">Update</button>
+                                <button class="btn btn-info update-btn" data-id="{{ area.id }}">Update</button>
                             </form>
                         </td>
 
@@ -224,7 +224,6 @@
                     success: function (data, status){
                         // console.log(data)
                         let form = $(`#form-${area_id}-data`)
-                        console.log(form.find("input[name*='area_name']").val())
                         form.find("input[name*='area_name']").val(data.area_name)
                         form.find("textarea[name*='expected_controls']").val(data.expected_controls)
                         form.find("textarea[name*='findings']").val(data.findings)
@@ -300,6 +299,50 @@
             }else{
 
             }
+        })
+
+        
+        //Update button Ajax Call\
+        function updateArea(area_id, area_form){
+            setTimeout(() => {
+                $(".update-btn").removeClass("loader");  
+            }, 1000);            
+            $.ajax({
+                url: "/ajax/edit/",
+                method: "post",
+                data:{
+                    "area_form_data":area_form,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(data, status){
+                    if(true){
+                        //Hide the form
+                        $(`#form-${area_id}`).removeClass("show");  
+                        let area = $(`#area-${area_id}`);
+                        let area_fields = JSON.parse(area_form);
+                        console.log(area_fields);
+                        area.find("td[field*='area_name']").text(data.area_name);
+                        area.find("td[field*='findings']").text(data.findings);
+                        area.find("td[field*='expected_controls']").text(data.expected_controls);
+                        area.find("td[field*='recommendations']").text(data.recommendations);
+                        area.find("td[field*='comment']").text(data.comment);
+                        area.find("td[field*='implementation_date']").text(data.implementation_date);
+
+                    }
+                },
+                error: function(data){
+                    console.log(data.responseText)
+                }
+            });
+        }
+
+        $(".update-btn").on("click", function(e){
+            e.preventDefault();
+            let area_id = $(this).attr("data-id");
+            let area_form = JSON.stringify($("#form-9").serializeArray());
+            // console.log(area_form);
+            $(this).addClass("loader");
+            updateArea(area_id, area_form);
         })
     });
 </script>

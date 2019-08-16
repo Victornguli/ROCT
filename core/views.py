@@ -5,6 +5,7 @@ from django.forms import formset_factory
 
 import csv
 import datetime
+import json
 
 from .resources import OversightResource
 from .models import Template, Area, Section, RO, CO, BU, Oversight
@@ -30,6 +31,7 @@ def export(request, oversight_id):
         response['Content-Disposition'] = 'attachment; filename={}.csv'.format(obj.oversight_name)
         writer = csv.writer(response, csv.excel)
         response.write(u'\ufeff'.encode('utf8')) # BOM (optional...Excel needs it to open UTF-8 file properly)
+        # noinspection PyPackageRequirements
         writer.writerow([
             smart_str(u""),
             smart_str(u""),
@@ -88,7 +90,11 @@ def filterTemplates(request):
         "templates":template_filter,
         "form":form,
     }
-    return render(request, "core/index.html", context)
+    return render(request, "core/templates.html", context)
+
+
+def reports(request):
+    return render(request, "core/index.html")
 
 
 def loadTemplate(request, template_id):
@@ -254,7 +260,6 @@ def editOversight(request, oversight_id):
     # for form in formset:
     #     print(form)
 
-
     context = {
         "oversight": oversight,
         "sections": sections,
@@ -271,7 +276,7 @@ def editOversight(request, oversight_id):
     return render(request, "core/edit_oversight.html", context)    
 
 
-#Ajax call to this view to display relevant area form values for a specific area
+# Ajax call to this view to display relevant area form values for a specific area
 def renderAreaForm(request):
     area_id = request.GET.get("area_id",None)
     area = Area.objects.get(pk=area_id)
@@ -294,7 +299,7 @@ def updateInline(request):
         area_name = request.GET.get("area_name", None)
         text = request.GET.get("text", None)
 
-        if(area_name == "area_name"):
+        if area_name == "area_name":
             area = Area.objects.filter(pk=area_id).update(area_name=text)
         elif area_name == "expected_controls":
             area = Area.objects.filter(pk=area_id).update(expected_controls=text)
@@ -366,6 +371,77 @@ def editFollowUp(request, oversight_id):
     }
 
     return render(request, "core/edit_followup.html", context)    
+
+
+def edit_oversight_ajax(request):
+    if request.method == "POST":
+        area_data = json.loads(request.POST.get("area_form_data"))
+        return_fields = dict()
+
+        # #Update Area
+        # Area.objects.filter(pk=request.POST.copy()["area_id"]).update(
+        #     area_name=area_name, expected_controls=expected_controls,
+        #     findings=findings, risk=risk, recommendation=recommendation, 
+        #     comment=comment, implementation_date=date)
+        for field in area_data:
+            if "area_id" in field["name"]:
+                area_id = field["value"]
+                print(area_id)
+
+            elif "area_name" in field["name"]:
+                area_name = field["value"]
+                print(area_name)  
+
+            elif "expected_controls" in field["name"]:
+                expected_controls = field["value"]
+                print(expected_controls)  
+
+            elif "findings" in field["name"]:
+                findings = field["value"]
+                print(findings)  
+
+            elif "risk" in field["name"]:
+                risk = field["value"]
+                print(risk)  
+
+            elif "recommendation" in field["name"]:
+                recommendation = field["value"]
+                print(recommendation)  
+
+            elif "comment" in field["name"]:
+                comment = field["value"]
+                print(comment)  
+
+            elif "date" in field["name"]:
+                date = field["value"]
+                print(date)  
+
+            elif "area" in field["name"]:
+                area = field["value"]
+                print(area)   
+
+            elif "section" in field["name"]:
+                section = field["value"]
+                print(section)                                                         
+
+            else:
+                pass
+
+        if area_id is not None:
+            Area.objects.filter(pk=area_id).update(
+                area_name=area_name, expected_controls=expected_controls,
+                findings=findings, risk=risk, recommendation=recommendation, 
+                comment=comment, implementation_date=date)
+            return_fields.update({"area_name":area_name, "expected_controls":expected_controls, "risk":risk,
+            "recommendation":recommendation, "comment":comment, "date":date})
+                   
+
+        return JsonResponse(return_fields)
+    else:
+        return HttpResponse("success")
+
+
+
 
 
 def close_oversight(request, oversight_id):
