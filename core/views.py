@@ -412,10 +412,9 @@ def edit_oversight_ajax(request):
                 comment = field["value"]
                 print(comment)  
 
-            elif "date" in field["name"]:
-                # date = datetime.datetime.strptime(field["value"], '%y/%m/%d')
-                date=""
-                print(date)  
+            elif "implementation_date" in field["name"]:
+                imp_date = datetime.datetime.strptime(field["value"], '%Y-%m-%d').date()
+                # print(type(imp_date))
 
             elif "area" in field["name"]:
                 area = field["value"]
@@ -432,10 +431,9 @@ def edit_oversight_ajax(request):
             Area.objects.filter(pk=area_id).update(
                 area_name=area_name, expected_controls=expected_controls,
                 findings=findings, risk=risk, recommendation=recommendation, 
-                comment=comment)
-            return_fields.update({"area_name":area_name, "expected_controls":expected_controls, "risk":risk,
-            "recommendation":recommendation, "comment":comment, "date":date})
-                   
+                comment=comment, implementation_date = imp_date)
+            return_fields.update({"area_name":area_name, "findings":findings, "expected_controls":expected_controls, "risk":risk,
+            "recommendation":recommendation, "comment":comment, "implementation_date":imp_date})                 
 
         return JsonResponse(return_fields)
     else:

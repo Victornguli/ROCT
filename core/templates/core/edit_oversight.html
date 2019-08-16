@@ -125,7 +125,7 @@
                                     <td class="area-field" contenteditable="false" field="implementation_date" data-id = "{{ area.id }}" class="text-success">{{ area.implementation_date }}</td>
                                 {% endif %}
                             {% else %}
-                            <td>&nbsp;</td>
+                            <td class="area-field" contenteditable="false" field="implementation_date" data-id = "{{ area.id }}" class="text-danger">&nbsp;</td>
                             {% endif %}
                         <td></td>
                     </tr>
@@ -321,12 +321,12 @@
                         let area = $(`#area-${area_id}`);
                         let area_fields = JSON.parse(area_form);
                         console.log(area_fields);
-                        area.find("td[field*='area_name']").text(data.area_name);
-                        area.find("td[field*='findings']").text(data.findings);
-                        area.find("td[field*='expected_controls']").text(data.expected_controls);
-                        area.find("td[field*='recommendations']").text(data.recommendations);
-                        area.find("td[field*='comment']").text(data.comment);
-                        area.find("td[field*='implementation_date']").text(data.implementation_date);
+                        area.find("td[field='area_name']").text(data.area_name);
+                        area.find("td[field='findings']").text(data.findings);
+                        area.find("td[field='expected_controls']").text(data.expected_controls);
+                        area.find("td[field='recommendation']").text(data.recommendation);
+                        area.find("td[field='comment']").text(data.comment);
+                        area.find("td[field='implementation_date']").text(data.implementation_date);
 
                     }
                 },
@@ -339,7 +339,8 @@
         $(".update-btn").on("click", function(e){
             e.preventDefault();
             let area_id = $(this).attr("data-id");
-            let area_form = JSON.stringify($("#form-9").serializeArray());
+            console.log(area_id);
+            let area_form = JSON.stringify($(`#form-${area_id}`).serializeArray());
             // console.log(area_form);
             $(this).addClass("loader");
             updateArea(area_id, area_form);
