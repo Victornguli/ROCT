@@ -94,7 +94,17 @@ def filterTemplates(request):
 
 
 def reports(request):
-    return render(request, "core/index.html")
+    ongoing = Oversight.objects.filter(status="ongoing").count()
+    follow_up = Oversight.objects.filter(status="follow_up").count()
+    closed = Oversight.objects.filter(status="closed").count()
+    total = Oversight.objects.all().count()
+    context = {
+        "ongoing" : ongoing,
+        "follow_up" : follow_up,
+        "closed" : closed,
+        "total" : total,
+    }
+    return render(request, "core/index.html", context)
 
 
 def loadTemplate(request, template_id):
@@ -378,11 +388,6 @@ def edit_oversight_ajax(request):
         area_data = json.loads(request.POST.get("area_form_data"))
         return_fields = dict()
 
-        # #Update Area
-        # Area.objects.filter(pk=request.POST.copy()["area_id"]).update(
-        #     area_name=area_name, expected_controls=expected_controls,
-        #     findings=findings, risk=risk, recommendation=recommendation, 
-        #     comment=comment, implementation_date=date)
         for field in area_data:
             if "area_id" in field["name"]:
                 area_id = field["value"]

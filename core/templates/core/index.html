@@ -8,7 +8,73 @@
 Reports
 {% endblock %}
 
+
 {% block content %}
+    <div class="container-fluid">
+        <div class="row mt-3">
+            <div class="col-sm-3">
+                <div class="card">
+                    <div class="card-header bg-dark text-light">Ongoing Missions</div>
+                    <div class="card-body">
+                        <div class="row font-weight-bold text-center" style="font-size: 30px;">
+                            <div class="col-md-6">
+                                <i class="fa fa-tasks mr-4" aria-hidden="true" style="color: gray;"></i>
+                            </div>
+                            <div class="col-md-6">
+                                {{ ongoing }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="card">
+                    <div class="card-header bg-dark text-light">Follow Up Missions</div>
+                    <div class="card-body">
+                        <div class="row font-weight-bold text-center" style="font-size: 30px;">
+                            <div class="col-md-6">
+                                <i class="fa fa-ticket mr-4" aria-hidden="true" style="color: rgb(27, 27, 161);"></i>
+                            </div>
+                            <div class="col-md-6">
+                                {{ follow_up }}
+                            </div>
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="card">
+                    <div class="card-header bg-dark text-light">Closed Missions</div>
+                    <div class="card-body">
+                        <div class="row font-weight-bold text-center" style="font-size: 30px;">
+                            <div class="col-md-6">
+                                <i class="fa fa-calendar-check-o  mr-4" aria-hidden="true" style="color: green;"></i>
+                            </div>
+                            <div class="col-md-6">
+                                {{ closed }}
+                            </div>
+                        </div>                        
+                    </div>
+                </div>                
+            </div>
+            <div class="col-sm-3">
+                <div class="card">
+                    <div class="card-header bg-dark text-light">Total Missions</div>
+                    <div class="card-body">
+                        <div class="row font-weight-bold text-center" style="font-size: 30px;">
+                            <div class="col-md-6">
+                                <i class="fa fa-calculator mr-4" aria-hidden="true" style="color:maroon;"></i>
+                            </div>
+                            <div class="col-md-6">
+                                {{ total }}
+                            </div>
+                        </div>                        
+                    </div>
+                </div>                
+            </div>
+        </div>
+
+    </div>
     <script src="{% static "core/js/jquery.min.js" %}"></script>
     <script src="{% static "core/js/bootstrap.min.js" %}"></script>
     <script src="{% static "core/js/datatables.min.js" %}"></script>
