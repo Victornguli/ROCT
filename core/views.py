@@ -100,9 +100,9 @@ def reports(request):
     closed = Oversight.objects.filter(status="closed").count()
     total = Oversight.objects.all().count()
 
-    recently_updated = Oversight.objects.values("oversight_name", "status").annotate(
+    recently_updated = Oversight.objects.values("oversight_name", "status").distinct().annotate(
         recent = Max("areas__updated_at")).filter(
-        areas__updated_at__gte=datetime.date.today() - datetime.timedelta(days=7)).distinct().order_by("-areas__updated_at")
+        areas__updated_at__gte=datetime.date.today() - datetime.timedelta(days=7)).order_by("-areas__updated_at")
     
     # recently_updated = Oversight.objects.filter(
     #     areas__updated_at__gte=datetime.date.today() - datetime.timedelta(days=7), 
