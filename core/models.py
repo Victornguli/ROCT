@@ -110,6 +110,7 @@ class Oversight(models.Model):
     
     class Meta:
         verbose_name = "Oversight"
+        ordering = ["-areas__updated_at"]
 
     def __str__(self):
         return self.oversight_name
