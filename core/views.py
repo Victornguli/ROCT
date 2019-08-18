@@ -66,7 +66,7 @@ def export(request, oversight_id):
             writer.writerow([
                 smart_str(u"{}".format(section.section_name)),
             ])
-            areas = Area.objects.filter(section_id=section.id)         
+            areas = Area.objects.filter(section_id=section.id)
             for area in areas:
                 area_count += 1
                 writer.writerow([
@@ -85,7 +85,7 @@ def export(request, oversight_id):
 def filterTemplates(request):
     templates = Template.objects.all()
     template_filter = TemplateFilter(request.GET, queryset=templates)
-    form = AddTemplateForm  
+    form = AddTemplateForm
 
     context = {
         "templates":template_filter,
@@ -100,12 +100,10 @@ def reports(request):
     closed = Oversight.objects.filter(status="closed").count()
     total = Oversight.objects.all().count()
 
-    recently_updated = Oversight.objects.values("oversight_name", "status").distinct().annotate(
-        recent = Max("areas__updated_at")).filter(
-        areas__updated_at__gte=datetime.date.today() - datetime.timedelta(days=7)).order_by("-areas__updated_at")
-    
+    recently_updated = Oversight.objects.values("oversight_name", "status").annotate(recent = Max("areas__updated_at"))
+
     # recently_updated = Oversight.objects.filter(
-    #     areas__updated_at__gte=datetime.date.today() - datetime.timedelta(days=7), 
+    #     areas__updated_at__gte=datetime.date.today() - datetime.timedelta(days=7),
     #     oversight_name__in=[item['oversight_name'] for item in distinct]
     #     ).order_by("-areas__updated_at")[:5]
 
@@ -149,10 +147,10 @@ def defineTemplate(request):
             country_office = CO.objects.get(co_name = form.cleaned_data.get("country_office"))
             business_unit = BU.objects.get(bu_name = form.cleaned_data.get("business_unit"))
             template_name = form.cleaned_data.get("template_name")
-            
+
             #Create new Template
             template = Template.objects.create(
-                template_name=template_name, regional_office=regional_office, 
+                template_name=template_name, regional_office=regional_office,
                 country_office=country_office, business_unit = business_unit)
             # print (regional_office, country_office, business_unit, template_name)
             return redirect("edit_template", template_id = template.id)
@@ -227,7 +225,7 @@ def startOversight(request, template_id):
     oversight = Oversight.objects.create(oversight_name="{} Oversight".format(template.template_name), template=template, regional_office=ro, country_office=co, business_unit=bu, status="ongoing")
     for section in sections:
         oversight.sections.add(section)
-    
+
     for area in areas:
         oversight.areas.add(area)
 
@@ -256,7 +254,7 @@ def editOversight(request, oversight_id):
     formset = AreaFormSet()
     if request.method == "POST":
         formsets = AreaFormSet(request.POST)
-        # area = Area.objects.get(pk=request.POST.copy()["area_id"])            
+        # area = Area.objects.get(pk=request.POST.copy()["area_id"])
         # print(area_formsets)
         if formsets.is_valid():
             for formset in formsets:
@@ -268,13 +266,13 @@ def editOversight(request, oversight_id):
                     recommendation = formset.cleaned_data.get("recommendation")
                     comment = formset.cleaned_data.get("comment")
                     date = formset.cleaned_data.get("implementation_date")
-                    area = Area.objects.get(pk=request.POST.copy()["area_id"])            
+                    area = Area.objects.get(pk=request.POST.copy()["area_id"])
                     section = Section.objects.get(pk=request.POST.copy()["section_id"])
-                    
+
                     # #Update Area
                     Area.objects.filter(pk=request.POST.copy()["area_id"]).update(
                         area_name=area_name, expected_controls=expected_controls,
-                        findings=findings, risk=risk, recommendation=recommendation, 
+                        findings=findings, risk=risk, recommendation=recommendation,
                         comment=comment, implementation_date=date)
 
             # print(findings, risk, recommendation, comment, section, area)
@@ -296,7 +294,7 @@ def editOversight(request, oversight_id):
         "today": today,
     }
 
-    return render(request, "core/edit_oversight.html", context)    
+    return render(request, "core/edit_oversight.html", context)
 
 
 # Ajax call to this view to display relevant area form values for a specific area
@@ -336,17 +334,17 @@ def updateInline(request):
         elif area_name == "comment":
             area = Area.objects.filter(pk=area_id).update(comment=text, updated_at=datetime.datetime.now())
         elif area_name == "implementation_comment":
-            area = Area.objects.filter(pk=area_id).update(implementation_comment=text, updated_at=datetime.datetime.now())            
+            area = Area.objects.filter(pk=area_id).update(implementation_comment=text, updated_at=datetime.datetime.now())
         elif area_name == "implementation_date":
             # area = Area.objects.filter(pk=area_id).update(implementation_date=text)
             pass
         else:
             pass
-        
+
         return HttpResponse("success")
-        
+
         # print(area_id, area_name, text)
-    return HttpResponse("error")   
+    return HttpResponse("error")
 
 
 def submitOversight(request, oversight_id):
@@ -372,19 +370,19 @@ def editFollowUp(request, oversight_id):
     areas = oversight.areas.all()
     #forms
     area_form = EditFollowUpForm
-    
+
     if request.method == "POST":
         area_form = EditFollowUpForm(request.POST)
         if area_form.is_valid():
             implementation_comment = area_form.cleaned_data.get("implementation_comment")
-            area = Area.objects.get(pk=request.POST.copy()["area_id"])            
+            area = Area.objects.get(pk=request.POST.copy()["area_id"])
             section = Section.objects.get(pk=request.POST.copy()["section_id"])
-            
+
             #Update Area
             Area.objects.filter(pk=request.POST.copy()["area_id"]).update(implementation_comment=implementation_comment)
 
             return redirect("edit_follow_up", oversight_id=oversight_id)
-            
+
     context = {
         "oversight": oversight,
         "sections": sections,
@@ -393,7 +391,7 @@ def editFollowUp(request, oversight_id):
         "today": today,
     }
 
-    return render(request, "core/edit_followup.html", context)    
+    return render(request, "core/edit_followup.html", context)
 
 
 def edit_oversight_ajax(request):
@@ -408,27 +406,27 @@ def edit_oversight_ajax(request):
 
             elif "area_name" in field["name"]:
                 area_name = field["value"]
-                # print(area_name)  
+                # print(area_name)
 
             elif "expected_controls" in field["name"]:
                 expected_controls = field["value"]
-                # print(expected_controls)  
+                # print(expected_controls)
 
             elif "findings" in field["name"]:
                 findings = field["value"]
-                # print(findings)  
+                # print(findings)
 
             elif "risk" in field["name"]:
                 risk = field["value"]
-                # print(risk)  
+                # print(risk)
 
             elif "recommendation" in field["name"]:
                 recommendation = field["value"]
-                # print(recommendation)  
+                # print(recommendation)
 
             elif "comment" in field["name"]:
                 comment = field["value"]
-                # print(comment)  
+                # print(comment)
 
             elif "implementation_date" in field["name"]:
                 imp_date = datetime.datetime.strptime(field["value"], '%Y-%m-%d').date()
@@ -436,11 +434,11 @@ def edit_oversight_ajax(request):
 
             elif "area" in field["name"]:
                 area = field["value"]
-                # print(area)   
+                # print(area)
 
             elif "section" in field["name"]:
                 section = field["value"]
-                # print(section)                                                         
+                # print(section)
 
             else:
                 pass
@@ -448,10 +446,10 @@ def edit_oversight_ajax(request):
         if area_id is not None:
             Area.objects.filter(pk=area_id).update(
                 area_name=area_name, expected_controls=expected_controls,
-                findings=findings, risk=risk, recommendation=recommendation, 
+                findings=findings, risk=risk, recommendation=recommendation,
                 comment=comment, implementation_date = imp_date, updated_at=datetime.datetime.now())
             return_fields.update({"area_name":area_name, "findings":findings, "expected_controls":expected_controls, "risk":risk,
-            "recommendation":recommendation, "comment":comment, "implementation_date":imp_date})                 
+            "recommendation":recommendation, "comment":comment, "implementation_date":imp_date})
 
         return JsonResponse(return_fields)
     else:

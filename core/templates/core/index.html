@@ -39,7 +39,7 @@ Reports
                             <div class="col-md-6">
                                 {{ follow_up }}
                             </div>
-                        </div>                        
+                        </div>
                     </div>
                 </div>
             </div>
@@ -54,9 +54,9 @@ Reports
                             <div class="col-md-6">
                                 {{ closed }}
                             </div>
-                        </div>                        
+                        </div>
                     </div>
-                </div>                
+                </div>
             </div>
             <div class="col-sm-3">
                 <div class="card">
@@ -69,9 +69,9 @@ Reports
                             <div class="col-md-6">
                                 {{ total }}
                             </div>
-                        </div>                        
+                        </div>
                     </div>
-                </div>                
+                </div>
             </div>
         </div>
 
@@ -102,7 +102,7 @@ Reports
                                     {% endif %}
                                 {% endif %}
                             </tr>
-                           
+
                         {% endfor %}
                     </tbody>
                 </table>
@@ -120,7 +120,7 @@ Reports
     <script type="text/javascript" src="{% static "core/fusioncharts/js/fusioncharts.js" %}"></script>
     <script type="text/javascript" src="{% static "core/fusioncharts/integrations/jquery/js/jquery-fusioncharts.min.js" %}"></script>
     <script type="text/javascript" src="{% static "core/fusioncharts/js/themes/fusioncharts.theme.fusion.js" %}"></script>
-    
+
 
     <script>
         $('document').ready(function () {
@@ -135,7 +135,7 @@ Reports
                 "paging": false,
                 "searching": false,
                 "info": false,
-            });  
+            });
 
 
             $("#status_pie").insertFusionCharts({
@@ -169,13 +169,13 @@ Reports
                 },
                 ]
             }
-            });  
+            });
 
 
-        });    
+        });
 
 
-            
+
     </script>
     {% block javascript %}
     {% endblock %}
