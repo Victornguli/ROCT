@@ -101,7 +101,7 @@ def reports(request):
     total = Oversight.objects.all().count()
 
     recently_updated = Oversight.objects.values("oversight_name", "status").annotate(
-        recent = Min("areas__updated_at")).filter(
+        recent = Max("areas__updated_at")).filter(
         areas__updated_at__gte=datetime.date.today() - datetime.timedelta(days=7))
     
     # recently_updated = Oversight.objects.filter(
