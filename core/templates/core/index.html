@@ -76,7 +76,37 @@ Reports
         </div>
 
         <div class="row mt-3 mb-2">
-            <div class="col-md-6"></div>
+            <div class="col-md-6">
+                <table id="updates_table" class="table table-sm table-bordered table-striped table-hover">
+                    <div class="alert alert-info font-weight-bold" style="font-size: 16px; color: black; ">Recently Updated Oversights</div>
+                    <thead class="table-head thead-dark">
+                        <tr>
+                            <th>Oversight Title</th>
+                            <th>Updated On</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="table-body">
+                        {% for oversight in recently_updated %}
+                            <tr>
+                                <td>{{ oversight.oversight_name }}</td>
+                                <td>{{ oversight.recent }}</td>
+                                {% if oversight.status %}
+                                    {% if oversight.status == "ongoing" %}
+                                        <td class="text-success">Ongoing</td>
+                                    {% elif oversight.status == "follow_up" %}
+                                        <td class="text-info">Follow Up</td>
+                                    {% elif oversight.status == "closed" %}
+                                        <td class="text-secondary">Closed</td>
+                                    {% endif %}
+                                {% endif %}
+                            </tr>
+                           
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             <div class="col-md-6">
                 <div id="status_pie"></div>
             </div>
@@ -94,6 +124,20 @@ Reports
 
     <script>
         $('document').ready(function () {
+
+            //Add Datatable display to the recently updated Table
+            $('#updates_table').DataTable({
+                "targets": 'no-sort',
+                "bSort": false,
+                "order": [],
+                "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                "iDisplayLength": -1,
+                "paging": false,
+                "searching": false,
+                "info": false,
+            });  
+
+
             $("#status_pie").insertFusionCharts({
             type: "pie2d",
             width: "100%",

@@ -61,7 +61,7 @@ class Area(models.Model):
     # template = models.ManyToManyField("Template", verbose_name="Template",null=True)
     # oversight = models.ManyToManyField("OversightReport", verbose_name="OVersight Report", null=True)
     implementation_comment = models.CharField(max_length=1000, null=True, verbose_name = "Implementation Comment")
-
+    updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
         verbose_name = "Area"
@@ -104,6 +104,8 @@ class Oversight(models.Model):
     business_unit = models.ForeignKey("BU", verbose_name="Business Unit", on_delete=models.CASCADE)
     areas = models.ManyToManyField("Area", verbose_name="Areas")
     sections = models.ManyToManyField("Section", verbose_name="Sections")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     # Add User relationship
     
     class Meta:

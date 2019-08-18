@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 from django.utils.encoding import smart_str
 from django.forms import formset_factory
+from django.db.models import Count, Max, Min
 
 import csv
 import datetime
@@ -98,11 +99,23 @@ def reports(request):
     follow_up = Oversight.objects.filter(status="follow_up").count()
     closed = Oversight.objects.filter(status="closed").count()
     total = Oversight.objects.all().count()
+
+    recently_updated = Oversight.objects.values("oversight_name", "status").annotate(
+        recent = Min("areas__updated_at")).filter(
+        areas__updated_at__gte=datetime.date.today() - datetime.timedelta(days=7))
+    
+    # recently_updated = Oversight.objects.filter(
+    #     areas__updated_at__gte=datetime.date.today() - datetime.timedelta(days=7), 
+    #     oversight_name__in=[item['oversight_name'] for item in distinct]
+    #     ).order_by("-areas__updated_at")[:5]
+
+    oversights = Oversight.objects.all()
     context = {
         "ongoing" : ongoing,
         "follow_up" : follow_up,
         "closed" : closed,
         "total" : total,
+        "recently_updated" : recently_updated,
     }
     return render(request, "core/index.html", context)
 
@@ -310,20 +323,20 @@ def updateInline(request):
         text = request.GET.get("text", None)
 
         if area_name == "area_name":
-            area = Area.objects.filter(pk=area_id).update(area_name=text)
+            area = Area.objects.filter(pk=area_id).update(area_name=text, updated_at=datetime.datetime.now())
         elif area_name == "expected_controls":
-            area = Area.objects.filter(pk=area_id).update(expected_controls=text)
+            area = Area.objects.filter(pk=area_id).update(expected_controls=text, updated_at=datetime.datetime.now())
         elif area_name == "findings":
-            area = Area.objects.filter(pk=area_id).update(findings=text)
+            area = Area.objects.filter(pk=area_id).update(findings=text, updated_at=datetime.datetime.now())
         elif area_name == "risk":
-            area = Area.objects.filter(pk=area_id).update(risk=text)
+            area = Area.objects.filter(pk=area_id).update(risk=text, updated_at=datetime.datetime.now())
             # pass
         elif area_name == "recommendation":
-            area = Area.objects.filter(pk=area_id).update(recommendation=text)
+            area = Area.objects.filter(pk=area_id).update(recommendation=text, updated_at=datetime.datetime.now())
         elif area_name == "comment":
-            area = Area.objects.filter(pk=area_id).update(comment=text)
+            area = Area.objects.filter(pk=area_id).update(comment=text, updated_at=datetime.datetime.now())
         elif area_name == "implementation_comment":
-            area = Area.objects.filter(pk=area_id).update(implementation_comment=text)            
+            area = Area.objects.filter(pk=area_id).update(implementation_comment=text, updated_at=datetime.datetime.now())            
         elif area_name == "implementation_date":
             # area = Area.objects.filter(pk=area_id).update(implementation_date=text)
             pass
@@ -391,31 +404,31 @@ def edit_oversight_ajax(request):
         for field in area_data:
             if "area_id" in field["name"]:
                 area_id = field["value"]
-                print(area_id)
+                # print(area_id)
 
             elif "area_name" in field["name"]:
                 area_name = field["value"]
-                print(area_name)  
+                # print(area_name)  
 
             elif "expected_controls" in field["name"]:
                 expected_controls = field["value"]
-                print(expected_controls)  
+                # print(expected_controls)  
 
             elif "findings" in field["name"]:
                 findings = field["value"]
-                print(findings)  
+                # print(findings)  
 
             elif "risk" in field["name"]:
                 risk = field["value"]
-                print(risk)  
+                # print(risk)  
 
             elif "recommendation" in field["name"]:
                 recommendation = field["value"]
-                print(recommendation)  
+                # print(recommendation)  
 
             elif "comment" in field["name"]:
                 comment = field["value"]
-                print(comment)  
+                # print(comment)  
 
             elif "implementation_date" in field["name"]:
                 imp_date = datetime.datetime.strptime(field["value"], '%Y-%m-%d').date()
@@ -423,11 +436,11 @@ def edit_oversight_ajax(request):
 
             elif "area" in field["name"]:
                 area = field["value"]
-                print(area)   
+                # print(area)   
 
             elif "section" in field["name"]:
                 section = field["value"]
-                print(section)                                                         
+                # print(section)                                                         
 
             else:
                 pass
@@ -436,7 +449,7 @@ def edit_oversight_ajax(request):
             Area.objects.filter(pk=area_id).update(
                 area_name=area_name, expected_controls=expected_controls,
                 findings=findings, risk=risk, recommendation=recommendation, 
-                comment=comment, implementation_date = imp_date)
+                comment=comment, implementation_date = imp_date, updated_at=datetime.datetime.now())
             return_fields.update({"area_name":area_name, "findings":findings, "expected_controls":expected_controls, "risk":risk,
             "recommendation":recommendation, "comment":comment, "implementation_date":imp_date})                 
 

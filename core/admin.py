@@ -55,11 +55,17 @@ export_csv.short_description = u"Export CSV"
 
 class OversightAdmin(admin.ModelAdmin):
     actions = [export_csv]
+    list_display = ("oversight_name", "created_at", "updated_at")
+
+@admin.register(Area)
+class AreaAdmin(admin.ModelAdmin):
+    list_display = ("area_name", "updated_at")
+
 
 admin.site.register(RO)
 admin.site.register(CO)
 admin.site.register(BU)
 admin.site.register(Section)
-admin.site.register(Area)
+# admin.site.register(Area)
 admin.site.register(Template)
 admin.site.register(Oversight, OversightAdmin)
