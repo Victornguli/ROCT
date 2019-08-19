@@ -181,7 +181,7 @@
 
 
 <script>
-    function saveField(area_id, area_name, text, area_field){
+    function saveField(area_id, area_name, text, area_field, oversight_id){
         // console.log(area_id+" "+area_name+" "+text);
         $.ajax({
             type: "get",
@@ -190,6 +190,7 @@
                 area_id : area_id,
                 area_name : area_name,
                 text : text,
+                oversight_id : oversight_id,
             },
 
             success: function (response) {
@@ -213,6 +214,7 @@
         $(".edit-btn").on("click", function(){
             if($(this).hasClass("collapsed")){
                 let area_id = $(this).attr("data-id")
+                
                 // console.log(area_id)
 
                 $.ajax({
@@ -280,14 +282,15 @@
                     let area_id = area_field.attr("data-id")
                     let area_name = area_field.attr("field")
                     let text = area_field.text().trim()
-                    console.log(text)
+                    let oversight_id = {{ oversight.id }}
+                    console.log(oversight_id)
                     // area_field.text(text)
                     // if(area_name == "risk"){
                     //     console.log(area_name)
                     //     area_field.find("div").show();
                     // }
                     area_field.addClass("loader");
-                    saveField(area_id, area_name, text, area_field)
+                    saveField(area_id, area_name, text, area_field, oversight_id)
 
                 }, timeout);
         });
@@ -304,6 +307,8 @@
         
         //Update button Ajax Call\
         function updateArea(area_id, area_form){
+            let oversight_id = {{ oversight.id }}
+
             setTimeout(() => {
                 $(".update-btn").removeClass("loader");  
             }, 1000);            
@@ -312,6 +317,7 @@
                 method: "post",
                 data:{
                     "area_form_data":area_form,
+                    oversight_id : oversight_id,
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 success: function(data, status){

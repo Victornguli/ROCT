@@ -172,7 +172,7 @@ Edit Follow Up Mission
 <script src="{% static "core/data-tables/js/dataTables.bootstrap4.min.js" %}"></script>
 
 <script>
-    function saveField(area_id, area_name, text, area_field){
+    function saveField(area_id, area_name, text, area_field, oversight_id){
         console.log(area_id+" "+area_name+" "+text);
         $.ajax({
             type: "get",
@@ -181,6 +181,7 @@ Edit Follow Up Mission
                 area_id : area_id,
                 area_name : area_name,
                 text : text,
+                oversight_id: oversight_id,
             },
 
             success: function (response) {
@@ -271,12 +272,13 @@ Edit Follow Up Mission
                     let area_id = area_field.attr("data-id")
                     let area_name = area_field.attr("field")
                     let text = area_field.text().trim()
+                    let oversight_id = {{ oversight.id }}
                     // if(area_name == "risk"){
                     //     console.log(area_name)
                     //     area_field.find("div").show();
                     // }
                     area_field.addClass("loader");
-                    saveField(area_id, area_name, text, area_field)
+                    saveField(area_id, area_name, text, area_field, oversight_id)
                     
                 }, timeout);
         });
@@ -289,6 +291,55 @@ Edit Follow Up Mission
 
             }
         })
+
+         //Update button Ajax Call\
+        function updateArea(area_id, area_form){
+            let oversight_id = {{ oversight.id }}
+            
+            setTimeout(() => {
+                $(".update-btn").removeClass("loader");  
+            }, 1000);            
+            $.ajax({
+                url: "/ajax/edit/",
+                method: "post",
+                data:{
+                    "area_form_data":area_form,
+                    oversight_id : oversight_id,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(data, status){
+                    if(true){
+                        //Hide the form
+                        $(`#form-${area_id}`).removeClass("show");  
+                        let area = $(`#area-${area_id}`);
+                        let area_fields = JSON.parse(area_form);
+                        console.log(area_fields);
+                        area.find("td[field='area_name']").text(data.area_name);
+                        area.find("td[field='findings']").text(data.findings);
+                        area.find("td[field='expected_controls']").text(data.expected_controls);
+                        area.find("td[field='recommendation']").text(data.recommendation);
+                        area.find("td[field='comment']").text(data.comment);
+                        area.find("td[field='implementation_date']").text(data.implementation_date);
+
+                    }
+                },
+                error: function(data){
+                    console.log(data.responseText)
+                }
+            });
+        }    
+
+        
+        $(".update-btn").on("click", function(e){
+            e.preventDefault();
+            let area_id = $(this).attr("data-id");
+            console.log(area_id);
+            let area_form = JSON.stringify($(`#form-${area_id}`).serializeArray());
+            // console.log(area_form);
+            $(this).addClass("loader");
+            updateArea(area_id, area_form);
+        })   
+
     });
 </script>
 

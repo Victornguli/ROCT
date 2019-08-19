@@ -100,7 +100,7 @@ def reports(request):
     closed = Oversight.objects.filter(status="closed").count()
     total = Oversight.objects.all().count()
 
-    recently_updated = Oversight.objects.values("oversight_name", "status").annotate(recent=Max("areas__updated_at"))
+    recently_updated = Oversight.objects.all().order_by("-updated_at")[:10]
 
     # recently_updated = Oversight.objects.filter(
     #     areas__updated_at__gte=datetime.date.today() - datetime.timedelta(days=7),
@@ -318,22 +318,31 @@ def updateInline(request):
         area_id = request.GET.get("area_id", None)
         area_name = request.GET.get("area_name", None)
         text = request.GET.get("text", None)
+        oversight_id = request.GET.get("oversight_id", None)
+        print (oversight_id)
 
         if area_name == "area_name":
             area = Area.objects.filter(pk=area_id).update(area_name=text, updated_at=datetime.datetime.now())
+            Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
         elif area_name == "expected_controls":
             area = Area.objects.filter(pk=area_id).update(expected_controls=text, updated_at=datetime.datetime.now())
+            Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
         elif area_name == "findings":
             area = Area.objects.filter(pk=area_id).update(findings=text, updated_at=datetime.datetime.now())
+            Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
         elif area_name == "risk":
             area = Area.objects.filter(pk=area_id).update(risk=text, updated_at=datetime.datetime.now())
+            Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
             # pass
         elif area_name == "recommendation":
             area = Area.objects.filter(pk=area_id).update(recommendation=text, updated_at=datetime.datetime.now())
+            Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
         elif area_name == "comment":
             area = Area.objects.filter(pk=area_id).update(comment=text, updated_at=datetime.datetime.now())
+            Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
         elif area_name == "implementation_comment":
             area = Area.objects.filter(pk=area_id).update(implementation_comment=text, updated_at=datetime.datetime.now())
+            Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
         elif area_name == "implementation_date":
             # area = Area.objects.filter(pk=area_id).update(implementation_date=text)
             pass
@@ -396,6 +405,7 @@ def editFollowUp(request, oversight_id):
 def edit_oversight_ajax(request):
     if request.method == "POST":
         area_data = json.loads(request.POST.get("area_form_data"))
+        oversight_id = request.POST.get("oversight_id")
         return_fields = dict()
 
         for field in area_data:
@@ -447,6 +457,9 @@ def edit_oversight_ajax(request):
                 area_name=area_name, expected_controls=expected_controls,
                 findings=findings, risk=risk, recommendation=recommendation,
                 comment=comment, implementation_date = imp_date, updated_at=datetime.datetime.now())
+            
+            Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
+
             return_fields.update({"area_name":area_name, "findings":findings, "expected_controls":expected_controls, "risk":risk,
             "recommendation":recommendation, "comment":comment, "implementation_date":imp_date})
 

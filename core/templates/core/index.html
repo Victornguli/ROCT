@@ -30,11 +30,11 @@ Reports
             </div>
             <div class="col-sm-3">
                 <div class="card">
-                    <div class="card-header bg-dark text-light">Follow Up Missions</div>
+                    <div class="card-header bg-dark text-light">Followup Missions</div>
                     <div class="card-body">
                         <div class="row font-weight-bold text-center" style="font-size: 30px;">
                             <div class="col-md-6">
-                                <i class="fa fa-ticket mr-4" aria-hidden="true" style="color: rgb(27, 27, 161);"></i>
+                                <i class="fa fa-ticket  mr-4" aria-hidden="true" style="color: green;"></i>
                             </div>
                             <div class="col-md-6">
                                 {{ follow_up }}
@@ -43,6 +43,7 @@ Reports
                     </div>
                 </div>
             </div>
+            
             <div class="col-sm-3">
                 <div class="card">
                     <div class="card-header bg-dark text-light">Closed Missions</div>
@@ -91,7 +92,7 @@ Reports
                         {% for oversight in recently_updated %}
                             <tr>
                                 <td>{{ oversight.oversight_name }}</td>
-                                <td>{{ oversight.recent }}</td>
+                                <td>{{ oversight.updated_at }}</td>
                                 {% if oversight.status %}
                                     {% if oversight.status == "ongoing" %}
                                         <td class="text-success">Ongoing</td>
