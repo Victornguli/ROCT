@@ -100,7 +100,7 @@ def reports(request):
     closed = Oversight.objects.filter(status="closed").count()
     total = Oversight.objects.all().count()
 
-    recently_updated = Oversight.objects.values("oversight_name", "status").annotate(recent = Max("areas__updated_at"))
+    recently_updated = Oversight.objects.values("oversight_name", "status").annotate(recent=Max("areas__updated_at"))
 
     # recently_updated = Oversight.objects.filter(
     #     areas__updated_at__gte=datetime.date.today() - datetime.timedelta(days=7),
@@ -220,15 +220,14 @@ def startOversight(request, template_id):
     ro = template.regional_office
     co = template.country_office
     bu = template.business_unit
-    sections = template.sections.all()
-    areas = template.areas.all()
+    sections = list(template.sections.all())
+    areas = list(template.areas.all())
     oversight = Oversight.objects.create(oversight_name="{} Oversight".format(template.template_name), template=template, regional_office=ro, country_office=co, business_unit=bu, status="ongoing")
-    for section in sections:
-        oversight.sections.add(section)
+    
+    oversight.sections.add(*sections)
+    oversight.areas.add(*areas)
 
-    for area in areas:
-        oversight.areas.add(area)
-
+    print (oversight)
     return redirect("edit_oversight", oversight_id=oversight.id)
 
 
