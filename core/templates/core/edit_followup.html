@@ -7,6 +7,7 @@
 Edit Follow Up Mission
 {% endblock %}
 {% block content %}
+<script src="{% static "core/js/jquery.min.js" %}"></script>
 <div class="container-fluid">
     <div class="card">
         <div class="card-header">
@@ -27,6 +28,7 @@ Edit Follow Up Mission
             <table id="{{ oversight.id }}" data-order="[]" class="table-sm table-bordered w-100">
                 <thead class="table-head table-secondary">
                     <tr>
+                        <th>NO</th>
                         <th>Area </th>
                         <th>Expected Controls</th>
                         <th>Findings</th>
@@ -38,9 +40,12 @@ Edit Follow Up Mission
                     </tr>
                 </thead>
                 <tbody>
+                    <script>
+                        var area_count = 1;
+                    </script>
                     {% for section in sections %}
                     <tr>
-                        <td colspan="8" class="alert alert-info">
+                        <td colspan="9" class="alert alert-info">
                             <div>
                             {{ section.section_name }}
                             </div>
@@ -52,10 +57,19 @@ Edit Follow Up Mission
                         <td style="padding: 0px !important"></td>
                         <td style="padding: 0px !important"></td>
                         <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
                     </tr>
                     {% for area in areas %}
                     {% if area.section == section %}
                     <tr>
+                        <td id="number-{{ area.id }}">
+                            <script>
+                                var area_id = {{ area.id }}
+                                $(`#number-${area_id}`).text(area_count);
+                                console.log(area_count);
+                                area_count += 1;
+                            </script>
+                        </td>
                         <td class="area-field" contenteditable="false" field="area_name" data-id = "{{ area.id }}" >
                             {% if area.area_name %}
                             {{ area.area_name }}                            
@@ -131,7 +145,7 @@ Edit Follow Up Mission
                     </tr>
 
                     <tr class="mb-4">
-                        <td colspan="8" class="text-left">
+                        <td colspan="9" class="text-left">
                             <button class="edit-btn btn btn-outline-primary btn-sm collapsed" data-toggle="collapse"
                                 data-target="#form-{{ area.id }}" data-id="{{ area.id }}">Edit Area</button>
                             <form id="form-{{ area.id }}" action="{% url "edit_follow_up" oversight.id %}" method="POST" class="collapse">
@@ -156,6 +170,7 @@ Edit Follow Up Mission
                         <td style="padding: 0px !important"></td>
                         <td style="padding: 0px !important"></td>
                         <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
                     </tr>
                     {% endif %}
                     {% endfor %}
@@ -166,7 +181,6 @@ Edit Follow Up Mission
         </div>
     </div>
 </div>
-<script src="{% static "core/js/jquery.min.js" %}"></script>
 <script src="{% static "core/js/bootstrap.min.js" %}"></script>
 <script src="{% static "core/js/datatables.min.js" %}"></script>
 <script src="{% static "core/data-tables/js/dataTables.bootstrap4.min.js" %}"></script>
