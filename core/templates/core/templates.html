@@ -85,6 +85,7 @@ Filter Templates
             <table id="template" class="table table-sm table-striped table-bordered">
                 <thead>
                     <tr>
+                        <th>NO</th>
                         <th>Template Name</th>
                         <th>Regional Office</th>
                         <th>Country Office</th>
@@ -95,6 +96,7 @@ Filter Templates
                 <tbody>
                     {% for template in templates.qs %}
                     <tr>
+                        <td>{{ forloop.counter }}</td>
                         <td>{{ template.template_name }}</td>
                         <td>{{ template.regional_office }}</td>
                         <td>{{ template.country_office }}</td>

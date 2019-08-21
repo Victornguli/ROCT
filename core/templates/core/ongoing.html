@@ -61,6 +61,7 @@ Ongoing Oversight Missions
             <table id="template" data-order="[]" class="table table-sm table-striped table-bordered">
                 <thead>
                     <tr>
+                        <th>NO</th>
                         <th>Template Name</th>
                         <th>Regional Office</th>
                         <th>Country Office</th>
@@ -72,6 +73,7 @@ Ongoing Oversight Missions
                     {% for oversight in oversights.qs %}
                     {% if oversight.status == "ongoing" %}
                     <tr>
+                        <td>{{ forloop.counter }}</td>
                         <td>{{ oversight.oversight_name }}</td>
                         <td>{{ oversight.regional_office }}</td>
                         <td>{{ oversight.country_office }}</td>

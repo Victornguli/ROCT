@@ -59,6 +59,7 @@ Follow up Missions
             <table id="template" class="table table-sm table-striped table-bordered">
                 <thead>
                     <tr>
+                        <th>NO</th>
                         <th>Overisght Title</th>
                         <th>Regional Office</th>
                         <th>Country Office</th>
@@ -69,6 +70,7 @@ Follow up Missions
                 <tbody>
                     {% for oversight in oversights.qs %}
                     <tr>
+                        <td>{{ forloop.counter }}</td>
                         <td>{{ oversight.oversight_name }}</td>
                         <td>{{ oversight.regional_office }}</td>
                         <td>{{ oversight.country_office }}</td>
