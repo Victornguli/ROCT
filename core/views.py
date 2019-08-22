@@ -10,7 +10,7 @@ import json
 
 from .resources import OversightResource
 from .models import Template, Area, Section, RO, CO, BU, Oversight
-from .filters import TemplateFilter, OversightFilter
+from .filters import TemplateFilter, OversightFilter, ReportsFilter
 from .forms import AddAreaForm, AddSectionForm, AddTemplateForm, AddOversightForm, EditActiveAreaForm, EditFollowUpForm
 # Create your views here.
 
@@ -107,13 +107,15 @@ def reports(request):
     #     oversight_name__in=[item['oversight_name'] for item in distinct]
     #     ).order_by("-areas__updated_at")[:5]
 
-    oversights = Oversight.objects.all()
+    oversight_queryset = Oversight.objects.all()
+    oversights = ReportsFilter(request.GET, queryset=oversight_queryset)
     context = {
         "ongoing" : ongoing,
         "follow_up" : follow_up,
         "closed" : closed,
         "total" : total,
         "recently_updated" : recently_updated,
+        "oversights" : oversights,
     }
     return render(request, "core/index.html", context)
 
@@ -124,8 +126,10 @@ def loadTemplate(request, template_id):
     areas = Area.objects.filter(template__id=template_id)
     section_form = AddSectionForm()
     area_form = AddAreaForm()
+    oversight_form = AddOversightForm()
     # section_form = AddSectionForm()
     context = {
+        "oversight_form": oversight_form,
         "template":template,
         "sections":sections,
         "areas":areas,
@@ -208,27 +212,43 @@ def editTemplate(request, template_id):
 
 def startOversight(request, template_id):
     template = Template.objects.get(pk=template_id)
-    # save_template = request.GET.copy()["save_template"]
-    # print(save_template)
-    # if save_template == "yes":
-    #     #Save this template( Already done.. so keep it)
-    #     pass
-    # else:
-    #     #delete this template
-    #     pass
+    form = AddOversightForm(request.POST)
+    if request.method == "POST":
+        print (form.errors)
+        if form.is_valid():
+            oversight_name = form.cleaned_data.get("oversight_name")
+            if oversight_name == "":
+                oversight_name = "{} Oversight".format(template.template_name)
+            else:
+                pass
 
-    ro = template.regional_office
-    co = template.country_office
-    bu = template.business_unit
-    sections = list(template.sections.all())
-    areas = list(template.areas.all())
-    oversight = Oversight.objects.create(oversight_name="{} Oversight".format(template.template_name), template=template, regional_office=ro, country_office=co, business_unit=bu, status="ongoing")
-    
-    oversight.sections.add(*sections)
-    oversight.areas.add(*areas)
+            print(oversight_name)
 
-    print (oversight)
-    return redirect("edit_oversight", oversight_id=oversight.id)
+            start_date = form.cleaned_data.get("start_date")
+            end_date = form.cleaned_data.get("end_date")
+            cost = form.cleaned_data.get("cost")
+            objectives = form.cleaned_data.get("objectives")
+
+            ro = template.regional_office
+            co = template.country_office
+            bu = template.business_unit
+            sections = list(template.sections.all())
+            areas = list(template.areas.all())
+            oversight = Oversight.objects.create(oversight_name=oversight_name, template=template, 
+                regional_office=ro, country_office=co, business_unit=bu, 
+                status="ongoing", start_date=start_date, end_date=end_date, 
+                cost=cost, objectives=objectives)
+            
+            oversight.sections.add(*sections)
+            oversight.areas.add(*areas)
+
+            print (oversight)
+            return redirect("edit_oversight", oversight_id=oversight.id)
+
+        else:
+            print (form.errors)
+        
+    return redirect("load_template", template_id=template_id)
 
 
 def ongoingOversight(request):

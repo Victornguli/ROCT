@@ -11,6 +11,49 @@ Reports
 
 {% block content %}
     <div class="container-fluid">
+        <div class="card mb-2">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-3">
+                    <a class="card-link" style="color: black" data-toggle="collapse" href="#filterForm">
+                        <h4 style="margin-top: 0" class="btn btn-sm btn-block btn-secondary">Filter Reports </h4>
+                    </a>
+                </div>
+                <div class="col-md-6"></div>
+                <hr>
+            </div>
+                
+            <form class="collapse hide" method="get" id="filterForm">
+                    <div class="bg-light p-2">
+                        <div class="row">
+                            <div class="form-group col-sm-4 col-md-3">
+                                {{ oversights.form.close_year.label_tag }}
+                                {% render_field oversights.form.close_year class="form-control" %}
+                            </div>
+
+                            <div class="form-group col-sm-4 col-md-3">
+                                {{ oversights.form.regional_office.label_tag }}
+                                {% render_field oversights.form.regional_office class="form-control" %}
+                            </div>
+
+                            <div class="form-group col-sm-4 col-md-3">
+                                {{ oversights.form.country_office.label_tag }}
+                                {% render_field oversights.form.country_office class="form-control" %}
+                            </div>
+
+                            <div class="form-group col-sm-4 col-md-3">
+                                {{ oversights.form.business_unit.label_tag }}
+                                {% render_field oversights.form.business_unit class="form-control" %}
+                            </div>
+
+                        </div>
+                        <button type="submit" class="btn btn-block btn-primary">
+                            <span class="glyphicon glyphicon-search"></span> Search
+                        </button>
+                    </div>
+                </form>                
+            </div>
+        </div>
         <div class="alert alert-secondary font-weight-bolder" style="color: black; font-size: 17px;">Oversight Missions Breakdown</div>
         <div class="row mt-3">
             <div class="col-sm-3">

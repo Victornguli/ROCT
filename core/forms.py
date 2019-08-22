@@ -58,9 +58,28 @@ class AddTemplateForm(forms.Form):
 
 
 class AddOversightForm(forms.Form):
-    oversight_name = forms.CharField(max_length=200, required=True, widget=forms.TextInput(
-        attrs={'placeholder':'Oversight Name'}), help_text="Type in the name of this Oversight Mission")
-    close_year = forms.DateField(widget=DatePicker())
+    oversight_name = forms.CharField(max_length=200, required=False, widget=forms.TextInput(
+        attrs={'placeholder':'Oversight Title'}), help_text="Leave this field blank to set name as the template name")
+
+    start_date = forms.DateTimeField(required=False,
+        input_formats=['%d/%m/%Y'],
+        widget=forms.DateTimeInput(attrs={
+            'class': 'form-control datetimepicker-input',
+            'data-target': '#datetimepicker1'
+        }))
+
+    end_date = forms.DateField(required=False,
+        input_formats=['%d/%m/%Y'],
+        widget=forms.DateTimeInput(attrs={
+            'class': 'form-control datetimepicker-input',
+            'data-target': '#datetimepicker1'
+        }))
+
+    cost = forms.CharField(max_length=200, required=True, widget= forms.TextInput(attrs={
+        "type" : "number",
+    }))
+    objectives = forms.CharField(max_length=1000, required=False, widget=forms.Textarea(
+        attrs={'placeholder': 'Mission Objectives', "rows": "4", "cols": "2"}), help_text="Enter Mission objectives")
 
 
 class EditFollowUpForm(forms.Form):

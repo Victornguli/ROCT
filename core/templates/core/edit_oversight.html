@@ -20,6 +20,9 @@
         <div class="card-header">
             <div class="">
             <b class="text-info">Mission Title: {{ oversight.oversight_name }}</b>
+            <p> <b>Mission Objectives</b> <br> {{ oversight.objectives }}</p>
+            <p> <b>Start Date : </b> {{ oversight.start_date }} </p>
+            <p> <b>End Date : </b> {{ oversight.end_date }} </p>
                 <div class="d-flex">
                     <form action="{% url "submit_oversight" oversight.id %}" class="form-inline">
                         <button style="margin: 0 !important" class="btn btn-sm btn-outline-dark">Submit Oversight Report</button>

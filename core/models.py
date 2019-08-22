@@ -96,7 +96,7 @@ class Oversight(models.Model):
     
     oversight_name = models.CharField(max_length=100, verbose_name="Oversight Name")
     template = models.ForeignKey("Template", verbose_name="Template", null=True, on_delete=models.CASCADE)
-    close_year = models.DateField(auto_now=False, auto_now_add=False, null=True, verbose_name="Year")
+    # close_year = models.DateField(auto_now=False, auto_now_add=False, null=True, verbose_name="Year")
     status = models.CharField(max_length=50, choices=oversight_status, verbose_name="Status")
 
     regional_office = models.ForeignKey("RO", verbose_name="Regional Office", on_delete=models.CASCADE)
@@ -106,6 +106,12 @@ class Oversight(models.Model):
     sections = models.ManyToManyField("Section", verbose_name="Sections")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    cost = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    objectives = models.TextField(null=True)
+    start_date = models.DateField(auto_now=False, auto_now_add=False, null=True)
+    end_date = models.DateField(auto_now=False, auto_now_add=False, null=True)
+
+
     # Add User relationship
     
     class Meta:
