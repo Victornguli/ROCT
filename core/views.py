@@ -329,6 +329,7 @@ def renderAreaForm(request):
         "recommendation":area.recommendation,
         "comment":area.comment,
         "implementation_date":area.implementation_date,
+        "implementation_comment":area.implementation_comment,
     }
     # print(data) Debug
     return JsonResponse(data)
@@ -438,65 +439,90 @@ def editFollowUp(request, oversight_id):
 def edit_oversight_ajax(request):
     if request.method == "POST":
         area_data = json.loads(request.POST.get("area_form_data"))
-        oversight_id = request.POST.get("oversight_id")
+        oversight_id = request.POST.get("oversight_id", None)
+        followup = request.POST.get("followup", None)
         return_fields = dict()
 
-        for field in area_data:
-            if "area_id" in field["name"]:
-                area_id = field["value"]
-                # print(area_id)
+        if followup == "true":
+            for field in area_data:   
+                if "area_id" in field["name"]:
+                    area_id = field["value"]
+                    # print(area_id)
 
-            elif "area_name" in field["name"]:
-                area_name = field["value"]
-                # print(area_name)
+                elif "section_id" in field["name"]:
+                    section = field["value"]
+                    # print(section)
 
-            elif "expected_controls" in field["name"]:
-                expected_controls = field["value"]
-                # print(expected_controls)
+                elif "implementation_comment" in field["name"]:
+                    implementation_comment = field["value"]
+                    # print(section) 
 
-            elif "findings" in field["name"]:
-                findings = field["value"]
-                # print(findings)
+                else:
+                    pass
 
-            elif "risk" in field["name"]:
-                risk = field["value"]
-                # print(risk)
+            if area_id is not None:
+                Area.objects.filter(pk=area_id).update(implementation_comment=implementation_comment, updated_at=datetime.datetime.now())
+                Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
+                return_fields.update({"implementation_comment":implementation_comment})
 
-            elif "recommendation" in field["name"]:
-                recommendation = field["value"]
-                # print(recommendation)
+            return JsonResponse(return_fields)            
 
-            elif "comment" in field["name"]:
-                comment = field["value"]
-                # print(comment)
+        else:
+            for field in area_data:            
+                if "area_id" in field["name"]:
+                    area_id = field["value"]
+                    # print(area_id)
 
-            elif "implementation_date" in field["name"]:
-                imp_date = datetime.datetime.strptime(field["value"], '%Y-%m-%d').date()
-                # print(type(imp_date))
+                elif "area_name" in field["name"]:
+                    area_name = field["value"]
+                    # print(area_name)               
 
-            elif "area" in field["name"]:
-                area = field["value"]
-                # print(area)
+                elif "expected_controls" in field["name"]:
+                    expected_controls = field["value"]
+                    # print(expected_controls)
 
-            elif "section" in field["name"]:
-                section = field["value"]
-                # print(section)
+                elif "findings" in field["name"]:
+                    findings = field["value"]
+                    # print(findings)
 
-            else:
-                pass
+                elif "risk" in field["name"]:
+                    risk = field["value"]
+                    # print(risk)
 
-        if area_id is not None:
-            Area.objects.filter(pk=area_id).update(
-                area_name=area_name, expected_controls=expected_controls,
-                findings=findings, risk=risk, recommendation=recommendation,
-                comment=comment, implementation_date = imp_date, updated_at=datetime.datetime.now())
-            
-            Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
+                elif "recommendation" in field["name"]:
+                    recommendation = field["value"]
+                    # print(recommendation)
 
-            return_fields.update({"area_name":area_name, "findings":findings, "expected_controls":expected_controls, "risk":risk,
-            "recommendation":recommendation, "comment":comment, "implementation_date":imp_date})
+                elif "comment" in field["name"]:
+                    comment = field["value"]
+                    # print(comment)
 
-        return JsonResponse(return_fields)
+                elif "implementation_date" in field["name"]:
+                    imp_date = datetime.datetime.strptime(field["value"], '%Y-%m-%d').date()
+                    # print(type(imp_date))
+
+                elif "area" in field["name"]:
+                    area = field["value"]
+                    # print(area)
+
+                elif "section" in field["name"]:
+                    section = field["value"]
+                    # print(section)          
+
+                else:
+                    pass
+
+            if area_id is not None:
+                Area.objects.filter(pk=area_id).update(
+                    area_name=area_name, expected_controls=expected_controls,
+                    findings=findings, risk=risk, recommendation=recommendation,
+                    comment=comment, implementation_date = imp_date, updated_at=datetime.datetime.now())
+                Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
+
+                return_fields.update({"area_name":area_name, "findings":findings, "expected_controls":expected_controls, "risk":risk,
+                "recommendation":recommendation, "comment":comment, "implementation_date":imp_date})
+
+            return JsonResponse(return_fields)
     else:
         return HttpResponse("success")
 
