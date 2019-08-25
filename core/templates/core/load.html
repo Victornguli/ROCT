@@ -198,7 +198,7 @@ Load Template
 <script src="{% static "core/data-tables/js/dataTables.bootstrap4.min.js" %}"></script>
 
 <script>
-    function saveField(area_id, area_name, text, area_field){
+    function saveField(area_id, area_name, text, area_field, is_template, template_id){
         // console.log(area_id+" "+area_name+" "+text);
         $.ajax({
             type: "get",
@@ -207,6 +207,8 @@ Load Template
                 area_id : area_id,
                 area_name : area_name,
                 text : text,
+                is_template : is_template,
+                template_id : template_id,
             },
 
             success: function (response) {
@@ -297,7 +299,7 @@ Load Template
             if(area_field.text().match(/\w/) == null){
                 $(this).html("");
             }else{
-                //Nothing Continue Editing...
+                //Nothing in the edit field Continue Editing...
             }
         })
 
@@ -308,6 +310,8 @@ Load Template
                     let area_id = area_field.attr("data-id")
                     let area_name = area_field.attr("field")
                     let text = area_field.text().trim()
+                    let is_template = "true"; //Flag to resolve whether the updated field is an oversight area or template area
+                    let template_id = {{ template.id }};
                     console.log(text)
                     // area_field.text(text)
                     // if(area_name == "risk"){
@@ -315,7 +319,7 @@ Load Template
                     //     area_field.find("div").show();
                     // }
                     area_field.addClass("loader");
-                    saveField(area_id, area_name, text, area_field)
+                    saveField(area_id, area_name, text, area_field, is_template, template_id)
                     
                 }, timeout);
         });

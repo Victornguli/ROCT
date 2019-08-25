@@ -9,7 +9,7 @@ import datetime
 import json
 
 from .resources import OversightResource
-from .models import Template, Area, Section, RO, CO, BU, Oversight
+from .models import Template, Area, TemplateArea, Section, RO, CO, BU, Oversight
 from .filters import TemplateFilter, OversightFilter, ReportsFilter
 from .forms import AddAreaForm, AddSectionForm, AddTemplateForm, AddOversightForm, EditActiveAreaForm, EditFollowUpForm
 # Create your views here.
@@ -95,20 +95,16 @@ def filterTemplates(request):
 
 
 def reports(request):
-    ongoing = Oversight.objects.filter(status="ongoing").count()
-    follow_up = Oversight.objects.filter(status="follow_up").count()
-    closed = Oversight.objects.filter(status="closed").count()
-    total = Oversight.objects.all().count()
-
-    recently_updated = Oversight.objects.all().order_by("-updated_at")[:10]
-
-    # recently_updated = Oversight.objects.filter(
-    #     areas__updated_at__gte=datetime.date.today() - datetime.timedelta(days=7),
-    #     oversight_name__in=[item['oversight_name'] for item in distinct]
-    #     ).order_by("-areas__updated_at")[:5]
-
     oversight_queryset = Oversight.objects.all()
     oversights = ReportsFilter(request.GET, queryset=oversight_queryset)
+
+    ongoing = oversights.qs.filter(status="ongoing").count()
+    follow_up = oversights.qs.filter(status="follow_up").count()
+    closed = oversights.qs.filter(status="closed").count()
+    total = oversights.qs.count()
+
+    recently_updated = oversights.qs.order_by("-updated_at")[:10]
+
     context = {
         "ongoing" : ongoing,
         "follow_up" : follow_up,
@@ -123,7 +119,7 @@ def reports(request):
 def loadTemplate(request, template_id):
     template = Template.objects.get(pk=template_id)
     sections = Section.objects.filter(template__id=template_id)
-    areas = Area.objects.filter(template__id=template_id)
+    areas = TemplateArea.objects.filter(template__id=template_id)
     section_form = AddSectionForm()
     area_form = AddAreaForm()
     oversight_form = AddOversightForm()
@@ -136,7 +132,7 @@ def loadTemplate(request, template_id):
         "section_form":section_form,
         "area_form":area_form,
     }
-    print(context["template"])
+    # print(context["template"])
 
     return render(request, "core/load.html", context)
 
@@ -170,7 +166,7 @@ def editTemplate(request, template_id):
     oversight_form = AddOversightForm
     template = Template.objects.get(pk=template_id)
     sections = template.sections.all()
-    areas = template.areas.all()
+    areas = template.template_areas.all()
     context = {
         "section_form": section_form,
         "area_form": area_form,
@@ -186,7 +182,6 @@ def editTemplate(request, template_id):
 
         #Handle Add Sections
         if section_form.is_valid():
-            print("Request _section")
             section_name = section_form.cleaned_data.get("section_name")
             section = Section.objects.create(section_name = section_name)
             template.sections.add(section) #many to many rel-ship
@@ -201,8 +196,8 @@ def editTemplate(request, template_id):
             expected_controls = area_form.cleaned_data.get("expected_controls")
             print(request.POST.copy()["section_id"])
             section = Section.objects.get(pk=request.POST.copy()["section_id"])
-            area = Area.objects.create(area_name = area_name, expected_controls = expected_controls, section=section)
-            template.areas.add(area)
+            template_area = TemplateArea.objects.create(area_name = area_name, expected_controls = expected_controls, section=section)
+            template.template_areas.add(template_area)
 
             return redirect("edit_template", template_id=template.id)
 
@@ -214,16 +209,12 @@ def startOversight(request, template_id):
     template = Template.objects.get(pk=template_id)
     form = AddOversightForm(request.POST)
     if request.method == "POST":
-        print (form.errors)
         if form.is_valid():
             oversight_name = form.cleaned_data.get("oversight_name")
             if oversight_name == "":
-                oversight_name = "{} Oversight".format(template.template_name)
+                oversight_name = template.template_name
             else:
                 pass
-
-            print(oversight_name)
-
             start_date = form.cleaned_data.get("start_date")
             end_date = form.cleaned_data.get("end_date")
             cost = form.cleaned_data.get("cost")
@@ -233,26 +224,36 @@ def startOversight(request, template_id):
             co = template.country_office
             bu = template.business_unit
             sections = list(template.sections.all())
-            areas = list(template.areas.all())
+            template_areas = list(template.template_areas.all())
+
             oversight = Oversight.objects.create(oversight_name=oversight_name, template=template, 
                 regional_office=ro, country_office=co, business_unit=bu, 
                 status="ongoing", start_date=start_date, end_date=end_date, 
                 cost=cost, objectives=objectives)
             
             oversight.sections.add(*sections)
-            oversight.areas.add(*areas)
 
-            print (oversight)
+            for template_area in template_areas:
+                area = Area.objects.create(
+                    area_name=template_area.area_name,
+                    expected_controls = template_area.expected_controls,
+                    section = template_area.section,
+                    )
+
+                oversight.areas.add(area) 
+                
+            # print (oversight)
             return redirect("edit_oversight", oversight_id=oversight.id)
-
         else:
-            print (form.errors)
+            # print (form.errors) debug from errors
+            pass
+
         
     return redirect("load_template", template_id=template_id)
 
 
 def ongoingOversight(request):
-    oversights = Oversight.objects.all()
+    oversights = Oversight.objects.filter(status="ongoing")
     oversight_filter = OversightFilter(request.GET, queryset=oversights)
     context = {
         "oversights": oversight_filter,
@@ -339,35 +340,47 @@ def updateInline(request):
         area_name = request.GET.get("area_name", None)
         text = request.GET.get("text", None)
         oversight_id = request.GET.get("oversight_id", None)
-        print (oversight_id)
+        is_template = request.GET.get("is_template", None)
+        print (oversight_id,is_template)
 
-        if area_name == "area_name":
-            area = Area.objects.filter(pk=area_id).update(area_name=text, updated_at=datetime.datetime.now())
-            Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
-        elif area_name == "expected_controls":
-            area = Area.objects.filter(pk=area_id).update(expected_controls=text, updated_at=datetime.datetime.now())
-            Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
-        elif area_name == "findings":
-            area = Area.objects.filter(pk=area_id).update(findings=text, updated_at=datetime.datetime.now())
-            Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
-        elif area_name == "risk":
-            area = Area.objects.filter(pk=area_id).update(risk=text, updated_at=datetime.datetime.now())
-            Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
-            # pass
-        elif area_name == "recommendation":
-            area = Area.objects.filter(pk=area_id).update(recommendation=text, updated_at=datetime.datetime.now())
-            Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
-        elif area_name == "comment":
-            area = Area.objects.filter(pk=area_id).update(comment=text, updated_at=datetime.datetime.now())
-            Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
-        elif area_name == "implementation_comment":
-            area = Area.objects.filter(pk=area_id).update(implementation_comment=text, updated_at=datetime.datetime.now())
-            Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
-        elif area_name == "implementation_date":
-            # area = Area.objects.filter(pk=area_id).update(implementation_date=text)
-            pass
+        if is_template == "true":
+            template = Template.objects.filter(pk=request.GET.get("template_id", None))
+            if area_name == "area_name":
+                template_area = TemplateArea.objects.filter(pk=area_id).update(area_name=text, updated_at=datetime.datetime.now())
+                template.update(updated_at=datetime.datetime.now())
+            elif area_name == "expected_controls":
+                template_area = TemplateArea.objects.filter(pk=area_id).update(expected_controls=text, updated_at=datetime.datetime.now())
+                template.update(updated_at=datetime.datetime.now())         
+            else:
+                pass           
         else:
-            pass
+            if area_name == "area_name":
+                area = Area.objects.filter(pk=area_id).update(area_name=text, updated_at=datetime.datetime.now())
+                Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
+            elif area_name == "expected_controls":
+                area = Area.objects.filter(pk=area_id).update(expected_controls=text, updated_at=datetime.datetime.now())
+                Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
+            elif area_name == "findings":
+                area = Area.objects.filter(pk=area_id).update(findings=text, updated_at=datetime.datetime.now())
+                Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
+            elif area_name == "risk":
+                area = Area.objects.filter(pk=area_id).update(risk=text, updated_at=datetime.datetime.now())
+                Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
+                # pass
+            elif area_name == "recommendation":
+                area = Area.objects.filter(pk=area_id).update(recommendation=text, updated_at=datetime.datetime.now())
+                Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
+            elif area_name == "comment":
+                area = Area.objects.filter(pk=area_id).update(comment=text, updated_at=datetime.datetime.now())
+                Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
+            elif area_name == "implementation_comment":
+                area = Area.objects.filter(pk=area_id).update(implementation_comment=text, updated_at=datetime.datetime.now())
+                Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
+            elif area_name == "implementation_date":
+                # area = Area.objects.filter(pk=area_id).update(implementation_date=text)
+                pass
+            else:
+                pass
 
         return HttpResponse("success")
 

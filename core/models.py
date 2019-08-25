@@ -58,8 +58,6 @@ class Area(models.Model):
     comment = models.CharField(max_length=1000, verbose_name="Management Comment", null=True)
     implementation_date = models.DateField(auto_now_add=False, verbose_name="Target Implementation Date", null=True)
     section = models.ForeignKey("Section", verbose_name="Section", on_delete=models.CASCADE, null=True)
-    # template = models.ManyToManyField("Template", verbose_name="Template",null=True)
-    # oversight = models.ManyToManyField("OversightReport", verbose_name="OVersight Report", null=True)
     implementation_comment = models.CharField(max_length=1000, null=True, verbose_name = "Implementation Comment")
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -70,13 +68,30 @@ class Area(models.Model):
         return self.area_name
 
 
+
+class TemplateArea(models.Model):
+    area_name = models.CharField(max_length=100, verbose_name="Area name", null=True)
+    expected_controls = models.CharField(max_length=1000, verbose_name="Expected Controls", null=True)
+    section = models.ForeignKey("Section", verbose_name="Section", on_delete=models.CASCADE, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "Template Area"
+
+    def __str__(self):
+        return self.area_name    
+
+
+
 class Template(models.Model):
     template_name = models.CharField(max_length=100, verbose_name="Template Title")
     regional_office = models.ForeignKey("RO", verbose_name="Regional Office", on_delete=models.CASCADE)
     country_office = models.ForeignKey("CO", verbose_name="Country Office", on_delete=models.CASCADE)
     business_unit = models.ForeignKey("BU", verbose_name="Business Unit", on_delete=models.CASCADE)
-    areas = models.ManyToManyField("Area", verbose_name="Areas")
+    template_areas = models.ManyToManyField("TemplateArea", verbose_name="Template Areas")
     sections = models.ManyToManyField("Section", verbose_name="Sections")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)    
     # oversight_report = models.ForeignKey("")
 
     class Meta:

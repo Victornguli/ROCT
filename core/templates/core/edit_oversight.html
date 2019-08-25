@@ -299,7 +299,7 @@
                     let area_id = area_field.attr("data-id")
                     let area_name = area_field.attr("field")
                     let text = area_field.text().trim()
-                    let oversight_id = {{ oversight.id }}
+                    let oversight_id = {{ oversight.id }};
                     console.log(oversight_id)
                     // area_field.text(text)
                     // if(area_name == "risk"){
@@ -335,26 +335,53 @@
                 data:{
                     "area_form_data":area_form,
                     oversight_id : oversight_id,
-                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
                 },
                 success: function(data, status){
                     if(true){
                         //Hide the form
                         $(`#form-${area_id}`).removeClass("show");  
                         let area = $(`#area-${area_id}`);
-                        let area_fields = JSON.parse(area_form);
-                        console.log(area_fields);
-                        area.find("td[field='area_name']").text(data.area_name);
-                        area.find("td[field='findings']").text(data.findings);
-                        area.find("td[field='expected_controls']").text(data.expected_controls);
-                        area.find("td[field='recommendation']").text(data.recommendation);
-                        area.find("td[field='comment']").text(data.comment);
-                        area.find("td[field='implementation_date']").text(data.implementation_date);
+                        // let area_fields = JSON.parse(area_form);
+                        // console.log(area_fields);
+                        area.find("td[field='area_name']").html(
+                            data.area_name != "" ? data.area_name : "&nbsp;"
+                            );
+                        area.find("td[field='findings']").html(
+                            data.findings != "" ? data.findings : "&nbsp;"
+                            );
+
+                        if (data.risk != ""){
+                            let risk_area  = area.find("td[field='risk']");
+                            if (data.risk == "high"){
+                                risk_area.removeClass("bg-warning bg-success bg-secondary").addClass("bg-danger").text("High");
+                            }else if (data.risk == "medium"){
+                                risk_area.removeClass("bg-danger bg-success bg-secondary").addClass("bg-warning").text("Medium");
+                            }else if(data.risk == "low"){
+                                risk_area.removeClass("bg-warning bg-danger bg-secondary").addClass("bg-success").text("Low");
+                            }else{
+                                risk_area.removeClass("bg-warning bg-danger bg-success").addClass("bg-secondary").text("Not Set");
+                            }
+                        }
+
+                        area.find("td[field='expected_controls']").html(
+                            data.expected_controls != "" ? data.expected_controls : "&nbsp;"
+                            );
+                        area.find("td[field='recommendation']").html(
+                            data.recommendation != "" ? data.recommendation : "&nbsp;"
+                            );
+                        area.find("td[field='comment']").html(
+                            data.comment != "" ? data.comment : "&nbsp;"
+                            );
+                        area.find("td[field='implementation_date']").html(
+                            data.implementation_date != "" ? data.implementation_date : "&nbsp;"
+                            );
+
 
                     }
                 },
                 error: function(data){
-                    console.log(data.responseText)
+                    // console.log(data.responseText)
                 }
             });
         }
@@ -363,7 +390,16 @@
             e.preventDefault();
             let area_id = $(this).attr("data-id");
             console.log(area_id);
-            let area_form = JSON.stringify($(`#form-${area_id}`).serializeArray());
+            let area_form = $(`#form-${area_id}`).serializeArray();
+            // let area_form = JSON.stringify($(`#form-${area_id}`).serializeArray());
+            let implementation_date = area_form[area_form.length - 1];
+            if (implementation_date.value == ""){
+                let current = new Date();
+                let date = `${current.getFullYear()}-${current.getMonth() + 1}-${current.getDate()}`;
+                console.log(date);
+                implementation_date.value = date;
+            }
+            area_form = JSON.stringify(area_form);
             // console.log(area_form);
             $(this).addClass("loader");
             updateArea(area_id, area_form);
