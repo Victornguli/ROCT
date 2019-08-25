@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import RO, CO, BU, Section, Area, TemplateArea, Template, Oversight
+from .models import RO, CO, BU, Section, TemplateSection, Area, TemplateArea, Template, Oversight
 from django.http import HttpResponse
 # Register your models here.
 
@@ -65,6 +65,11 @@ class AreaAdmin(admin.ModelAdmin):
 @admin.register(TemplateArea)
 class TemplateAreaAdmin(admin.ModelAdmin):
     list_display = ("area_name", "updated_at")
+
+
+@admin.register(TemplateSection)
+class TemplateSectionAdmin(admin.ModelAdmin):
+    list_display = ("section_name",)
 
 
 

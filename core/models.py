@@ -44,6 +44,17 @@ class Section(models.Model):
         return self.section_name
 
 
+class TemplateSection(models.Model):
+    section_name = models.CharField(max_length=100, verbose_name="Section name")
+
+
+    class Meta:
+        verbose_name = "Template Section"
+
+    def __str__(self):
+        return self.section_name    
+
+
 class Area(models.Model):
     risk_choices = (
         ("high", "High"),
@@ -72,7 +83,7 @@ class Area(models.Model):
 class TemplateArea(models.Model):
     area_name = models.CharField(max_length=100, verbose_name="Area name", null=True)
     expected_controls = models.CharField(max_length=1000, verbose_name="Expected Controls", null=True)
-    section = models.ForeignKey("Section", verbose_name="Section", on_delete=models.CASCADE, null=True)
+    template_section = models.ForeignKey("TemplateSection", verbose_name="Template Section", on_delete=models.CASCADE, null=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
@@ -89,7 +100,7 @@ class Template(models.Model):
     country_office = models.ForeignKey("CO", verbose_name="Country Office", on_delete=models.CASCADE)
     business_unit = models.ForeignKey("BU", verbose_name="Business Unit", on_delete=models.CASCADE)
     template_areas = models.ManyToManyField("TemplateArea", verbose_name="Template Areas")
-    sections = models.ManyToManyField("Section", verbose_name="Sections")
+    template_sections = models.ManyToManyField("TemplateSection", verbose_name="Sections")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)    
     # oversight_report = models.ForeignKey("")

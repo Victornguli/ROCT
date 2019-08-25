@@ -9,7 +9,7 @@ import datetime
 import json
 
 from .resources import OversightResource
-from .models import Template, Area, TemplateArea, Section, RO, CO, BU, Oversight
+from .models import Template, Area, TemplateArea, Section, TemplateSection, RO, CO, BU, Oversight
 from .filters import TemplateFilter, OversightFilter, ReportsFilter
 from .forms import AddAreaForm, AddSectionForm, AddTemplateForm, AddOversightForm, EditActiveAreaForm, EditFollowUpForm
 # Create your views here.
@@ -118,7 +118,7 @@ def reports(request):
 
 def loadTemplate(request, template_id):
     template = Template.objects.get(pk=template_id)
-    sections = Section.objects.filter(template__id=template_id)
+    sections = TemplateSection.objects.filter(template__id=template_id)
     areas = TemplateArea.objects.filter(template__id=template_id)
     section_form = AddSectionForm()
     area_form = AddAreaForm()
@@ -165,7 +165,7 @@ def editTemplate(request, template_id):
     area_form = AddAreaForm
     oversight_form = AddOversightForm
     template = Template.objects.get(pk=template_id)
-    sections = template.sections.all()
+    sections = template.template_sections.all()
     areas = template.template_areas.all()
     context = {
         "section_form": section_form,
@@ -183,8 +183,8 @@ def editTemplate(request, template_id):
         #Handle Add Sections
         if section_form.is_valid():
             section_name = section_form.cleaned_data.get("section_name")
-            section = Section.objects.create(section_name = section_name)
-            template.sections.add(section) #many to many rel-ship
+            section = TemplateSection.objects.create(section_name = section_name)
+            template.template_sections.add(section) #many to many rel-ship
 
             return redirect("edit_template", template_id = template.id)
         else:
@@ -195,8 +195,8 @@ def editTemplate(request, template_id):
             area_name = area_form.cleaned_data.get("area_name")
             expected_controls = area_form.cleaned_data.get("expected_controls")
             print(request.POST.copy()["section_id"])
-            section = Section.objects.get(pk=request.POST.copy()["section_id"])
-            template_area = TemplateArea.objects.create(area_name = area_name, expected_controls = expected_controls, section=section)
+            section = TemplateSection.objects.get(pk=request.POST.copy()["section_id"])
+            template_area = TemplateArea.objects.create(area_name = area_name, expected_controls = expected_controls, template_section=section)
             template.template_areas.add(template_area)
 
             return redirect("edit_template", template_id=template.id)
@@ -223,7 +223,7 @@ def startOversight(request, template_id):
             ro = template.regional_office
             co = template.country_office
             bu = template.business_unit
-            sections = list(template.sections.all())
+            template_sections = list(template.template_sections.all())
             template_areas = list(template.template_areas.all())
 
             oversight = Oversight.objects.create(oversight_name=oversight_name, template=template, 
@@ -231,16 +231,22 @@ def startOversight(request, template_id):
                 status="ongoing", start_date=start_date, end_date=end_date, 
                 cost=cost, objectives=objectives)
             
-            oversight.sections.add(*sections)
+            # oversight.sections.add(*sections)
 
-            for template_area in template_areas:
-                area = Area.objects.create(
-                    area_name=template_area.area_name,
-                    expected_controls = template_area.expected_controls,
-                    section = template_area.section,
-                    )
+            for template_section in template_sections:
+                section = Section.objects.create(section_name = template_section.section_name)
+                oversight.sections.add(section)
+                for template_area in template_areas:
+                    if template_area.template_section == template_section:
+                        area = Area.objects.create(
+                            area_name=template_area.area_name,
+                            expected_controls = template_area.expected_controls,
+                            section = section,
+                            )
+                    oversight.areas.add(area)                 
 
-                oversight.areas.add(area) 
+
+                
                 
             # print (oversight)
             return redirect("edit_oversight", oversight_id=oversight.id)
@@ -557,3 +563,68 @@ def view_closed_oversight(request, oversight_id):
 
     return render(request, "core/view_closed.html", context)
 
+
+
+def editSection(request):
+    is_template = request.GET.get("is_template", None)
+    is_oversight = request.GET.get("is_oversight", None)
+
+    section_id = request.GET.get("section_id", None)
+    section_name = request.GET.get("section_name", None)
+
+    if is_template is not None:
+        template_id = request.GET.get("template_id", None)
+        if template_id is not None:
+            section = TemplateSection.objects.filter(pk=section_id).update(section_name=section_name)
+            template = Template.objects.filter(pk=template_id, updated_at=datetime.datetime.now())
+            return HttpResponse("success")
+
+    elif is_oversight is not None:
+        oversight_id = request.GET.get("oversight_id", None)
+        if oversight_id is not None:
+            section = Section.objects.filter(pk=section_id).update(section_name=section_name)
+            oversight = Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
+            return HttpResponse("success")
+ 
+
+def deleteSection(request):
+    is_template = request.GET.get("is_template", None)
+    is_oversight = request.GET.get("is_oversight", None)
+    section_id = request.GET.get("section_id", None)
+
+    if is_template is not None:
+        template_id = request.GET.get("template_id", None)
+        if template_id is not None:
+            template = Template.objects.filter(pk=template_id).update(updated_at=datetime.datetime.now())
+            areas = TemplateArea.objects.filter(template_section__id=section_id).delete()
+            section = TemplateSection.objects.filter(pk=section_id).delete()
+            return HttpResponse("success")
+
+
+    elif is_oversight is not None:
+        oversight_id = request.GET.get("oversight_id", None)
+        if oversight_id is not None:
+            oversight = Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
+            areas = Area.objects.filter(section__id=section_id).delete()
+            section = Section.objects.filter(pk=section_id).delete()
+            return HttpResponse("success")        
+
+
+def deleteArea(request):
+    is_template = request.GET.get("is_template", None)
+    is_oversight = request.GET.get("is_oversight", None)
+    area_id = request.GET.get("area_id", None)
+
+    if is_template is not None:
+        template_id = request.GET.get("template_id", None)
+        if template_id is not None:
+            template = Template.objects.filter(pk=template_id).update(updated_at=datetime.datetime.now())
+            areas = TemplateArea.objects.filter(pk=area_id).delete()
+            return HttpResponse("success")
+
+    elif is_oversight is not None:
+        oversight_id = request.GET.get("oversight_id", None)
+        if oversight_id is not None:
+            oversight = Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
+            areas = Area.objects.filter(pk=area_id).delete()
+            return HttpResponse("success")               

@@ -27,11 +27,6 @@ Edit Templates
             <b class="text-info">Template Title: {{ template.template_name }}</b>
             <div class="">
                 <form action="{% url "start" template.id %}" class="form-inline">
-                    <input class="form-check-input" type="checkbox" name="save_template" value="yes" id="is_template">
-                    <label class="form-check-label mr-2" for="is_template">
-                    Commit as a template
-                    </label>
-                    <br>
                     <button style="margin: 0 !important" class="btn btn-sm btn-outline-dark m-3">Start Oversight Mission</button>
                 </form>
             </div>
@@ -48,6 +43,7 @@ Edit Templates
                         <th>Recommendations</th>
                         <th>Management Comment</th>
                         <th>Target Implementation Date</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -59,6 +55,9 @@ Edit Templates
                         <td colspan="8" class="alert alert-info">
                             {{ section.section_name }}
                         </td>
+                        <td class="alert-info">
+                            <button class="btn btn-sm btn-outline-danger float-right delete-section" data-id="{{ section.id }}">x</button>
+                        </td>                        
                         <td style="padding: 0px !important"></td>
                         <td style="padding: 0px !important"></td>
                         <td style="padding: 0px !important"></td>
@@ -68,7 +67,7 @@ Edit Templates
                         <td style="padding: 0px !important"></td>
                     </tr>
                     {% for area in areas %}
-                        {% if area.section == section %}
+                        {% if area.template_section == section %}
                         <tr id="area-{{ area.id }}">
                         <td id="number-{{ area.id }}">
                             <script>
@@ -85,10 +84,15 @@ Edit Templates
                         <td class="area-field" contenteditable="false" field="recommendation" data-id = "{{ area.id }}" >&nbsp;</td>
                         <td class="area-field" contenteditable="false" field="comment" data-id = "{{ area.id }}" >&nbsp;</td>
                         <td class="area-field" contenteditable="false" field="implementation_date" data-id = "{{ area.id }}" >&nbsp;</td>
-                        <td></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger float-right delete-area" data-id="{{ area.id }}">x</button>
+                        </td>
+                        <td style="padding: 0px !important"></td>
+
                         </tr>
                         {% else %}
                         <tr>
+                            <td style="padding: 0px !important"></td>
                             <td style="padding: 0px !important"></td>
                             <td style="padding: 0px !important"></td>
                             <td style="padding: 0px !important"></td>
@@ -102,7 +106,7 @@ Edit Templates
                         
                     {% endfor %}
                     <tr>
-                        <td colspan="8" class="text-left">
+                        <td colspan="9" class="text-left">
                             <button class="btn btn-outline-primary btn-sm" data-toggle="collapse" data-target="#form-{{ section.id }}">Add Area</button>
                             <form id="form-{{ section.id }}" action="{% url "edit_template" template.id %}" method="POST" class="collapse hide">
                                 {% csrf_token %}
@@ -124,10 +128,11 @@ Edit Templates
                         <td style="padding: 0px !important"></td>
                         <td style="padding: 0px !important"></td>
                         <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
                     </tr>
                     {% endfor %}
                     <tr>
-                        <td colspan="8" class="text-center p-2">
+                        <td colspan="9" class="text-center p-2">
                             <button class="btn btn-sm btn-warning btn-block" data-toggle="collapse"
                                 data-target="#add-section-{{ template.id }}">Add Section</button>
                             <form id="add-section-{{ template.id }}" action="{% url "edit_template" template.id %}" method="POST" class="collapse text-left">
@@ -154,6 +159,7 @@ Edit Templates
                         <td style="padding: 0px !important"></td>
                         <td style="padding: 0px !important"></td>
                         <td style="padding: 0px !important"></td>
+                        <td style="padding: 0px !important"></td>
                     </tr>
                 </tbody>
             </table>
@@ -166,131 +172,224 @@ Edit Templates
 <script src="{% static "core/data-tables/js/dataTables.bootstrap4.min.js" %}"></script>
 
 <script>
-    function saveField(area_id, area_name, text, area_field, is_template, template_id){
-        // console.log(area_id+" "+area_name+" "+text);
-        $.ajax({
-            type: "get",
-            url: "/edit/update_inline",
-            data: {
-                area_id : area_id,
-                area_name : area_name,
-                text : text,
-                is_template : is_template,
-                template_id : template_id,
-            },
-
-            success: function (response) {
-                setTimeout(function(){
-                    area_field.removeClass("loader");
-                }, 800)
-                console.log(response)    
-            }
-        });
-    }
-
-    $(document).ready(function () {
-        $('#{{ template.id }}').DataTable({
-            "targets": 'no-sort',
-            "bSort": false,
-            "order": [],
-            "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-            "iDisplayLength": -1,
-        });
-
-        $(".edit-btn").on("click", function(){
-            if($(this).hasClass("collapsed")){
-                let area_id = $(this).attr("data-id")
-                // console.log(area_id)   
-                
-                $.ajax({
-                    type: "get",
-                    url: "/ajax/area_form",
-                    data: {
-                        area_id:area_id,
-                    },
-                    success: function (data, status){
-                        // console.log(data)
-                        let form = $(`#form-${area_id}-data`)
-                        console.log(form.find("input[name*='area_name']").val())
-                        form.find("input[name*='area_name']").val(data.area_name)
-                        form.find("textarea[name*='expected_controls']").val(data.expected_controls)
-                        form.find("textarea[name*='findings']").val(data.findings)
-                        form.find("select[name*='risk']").val(data.risk)
-                        form.find("textarea[name*='recommendation']").val(data.recommendation)
-                        form.find("textarea[name*='comment']").val(data.comment)
-                        form.find("input[name*='implementation_date']").val(data.implementation_date)
-                        // let area2 = form.find(`#input-{{ area_id }}`)
-                    }
-                });
-            }
-        })
-
-        let timer;
-        let timeout = 1000;
-
-        // $(".area-risk").on("click focus", function(){
-        //     let risk = $(this)
-        //     let risk_text = risk.find("span")
-        //     risk.find("div").show()
-        //     let risk_select = risk.find("select")
-        //     risk_select.on("change", function(){
-        //         console.log(risk_select.val())
-        //         risk_text.text(risk_select.val().charAt(0).toUpperCase() + risk_select.val().slice(1))
-        //         let area_name = risk.attr("field")
-        //         let area_id = risk.attr("data-id")
-        //         let text = risk_text.text().charAt(0).toLowerCase() + risk_text.text().slice(1)
-        //         // console.log(area_name + )
-        //         saveField(area_id, area_name, text)
-        //     })
-        //     // console.log(risk_select.val())
-        // })
-
-        // $(".area-risk").on("focusout", function(){
-        //     let risk = $(this).find("div")
-        //     risk.hide()
-        //     console.log(risk.val())
-        // })
-
-        $(".area-field").on("focus", function(){
-            console.log("focused");
-            let area_field = $(this);
-            if(area_field.text().match(/\w/) == null){
-                $(this).html("");
-            }else{
-                //Nothing Continue Editing...
-            }
-        })
-
-        $('.area-field').on("keyup focusout paste", function(){
-            clearTimeout(timer);
-            let area_field = $(this);
-                timer = setTimeout(function(){
-                    let area_id = area_field.attr("data-id");
-                    let area_name = area_field.attr("field");
-                    let text = area_field.text().trim();
-                    let is_template = "true"; //Flag to resolve whether the updated field is an oversight area or template area
-                    let template_id = {{ template.id }};
-                    console.log(text)
-                    // area_field.text(text)
-                    // if(area_name == "risk"){
-                    //     console.log(area_name)
-                    //     area_field.find("div").show();
-                    // }
-                    area_field.addClass("loader");
-                    saveField(area_id, area_name, text, area_field, is_template, template_id)
+        function saveField(area_id, area_name, text, area_field, is_template, template_id){
+            // console.log(area_id+" "+area_name+" "+text);
+            $.ajax({
+                type: "get",
+                url: "/edit/update_inline",
+                data: {
+                    area_id : area_id,
+                    area_name : area_name,
+                    text : text,
+                    is_template : is_template,
+                    template_id : template_id,
+                },
+    
+                success: function (response) {
+                    setTimeout(function(){
+                        area_field.removeClass("loader");
+                    }, 800)
+                    console.log(response)    
+                }
+            });
+        }
+    
+        function editSection(section_id, section_name, is_template, template_id, section_field){
+            // console.log(area_id+" "+area_name+" "+text);
+            $.ajax({
+                type: "get",
+                url: "/ajax/edit/section",
+                data: {
+                    section_id : section_id,
+                    section_name : section_name,
+                    is_template : is_template,
+                    template_id : template_id,
+                },
+    
+                success: function (response) {
+                    setTimeout(function(){
+                        section_field.removeClass("loader");
+                    }, 800)
+                    console.log(response)    
+                }
+            });
+        }
+    
+        $(document).ready(function () {
+            $('#{{ template.id }}').DataTable({
+                "targets": 'no-sort',
+                "bSort": false,
+                "order": [],
+                "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                "iDisplayLength": -1,
+            });
+    
+            $(".edit-btn").on("click", function(){
+                if($(this).hasClass("collapsed")){
+                    let area_id = $(this).attr("data-id")
+                    // console.log(area_id)   
                     
-                }, timeout);
+                    $.ajax({
+                        type: "get",
+                        url: "/ajax/area_form",
+                        data: {
+                            area_id:area_id,
+                        },
+                        success: function (data, status){
+                            // console.log(data)
+                            let form = $(`#form-${area_id}-data`)
+                            console.log(form.find("input[name*='area_name']").val())
+                            form.find("input[name*='area_name']").val(data.area_name)
+                            form.find("textarea[name*='expected_controls']").val(data.expected_controls)
+                            form.find("textarea[name*='findings']").val(data.findings)
+                            form.find("select[name*='risk']").val(data.risk)
+                            form.find("textarea[name*='recommendation']").val(data.recommendation)
+                            form.find("textarea[name*='comment']").val(data.comment)
+                            form.find("input[name*='implementation_date']").val(data.implementation_date)
+                            // let area2 = form.find(`#input-{{ area_id }}`)
+                        }
+                    });
+                }
+            })
+    
+            let timer;
+            let timeout = 1000;
+    
+            $(".area-field").on("focus", function(){
+                console.log("focused");
+                let area_field = $(this);
+                if(area_field.text().match(/\w/) == null){
+                    $(this).html("");
+                }else{
+                    //Nothing in the edit field Continue Editing...
+                }
+            })
+    
+            $('.area-field').on("keyup focusout paste", function(){
+                clearTimeout(timer);
+                let area_field = $(this);
+                    timer = setTimeout(function(){
+                        let area_id = area_field.attr("data-id")
+                        let area_name = area_field.attr("field")
+                        let text = area_field.text().trim()
+                        let is_template = "true"; //Flag to resolve whether the updated field is an oversight area or template area
+                        let template_id = {{ template.id }};
+                        console.log(text)
+                        // area_field.text(text)
+                        // if(area_name == "risk"){
+                        //     console.log(area_name)
+                        //     area_field.find("div").show();
+                        // }
+                        area_field.addClass("loader");
+                        saveField(area_id, area_name, text, area_field, is_template, template_id)
+                        
+                    }, timeout);
+            });
+    
+            $(".area-field").on("focusout", function(){
+                let area_field = $(this).text()
+                if(area_field == ""){
+                    $(this).html('&nbsp;');
+                }else{
+    
+                }
+            })
+    
+    
+    
+            //Editing Section Fields
+            $(".section-field").on("focus", function(){
+                console.log("focused");
+                let section_field = $(this);
+                if(section_field.text().match(/\w/) == null){
+                    $(this).html("");
+                }else{
+                    //Nothing in the edit field Continue Editing...
+                }
+            })
+    
+            $('.section-field').on("keyup focusout paste", function(){
+                clearTimeout(timer);
+                let section_field = $(this);
+                    timer = setTimeout(function(){
+                        let section_id = section_field.attr("data-id")
+                        let section_name = section_field.text().trim()
+                        let is_template = "true"; //Flag to resolve whether the updated field is an oversight area or template area
+                        let template_id = {{ template.id }};
+                        console.log(section_name)
+                        // area_field.text(text)
+                        // if(area_name == "risk"){
+                        //     console.log(area_name)
+                        //     area_field.find("div").show();
+                        // }
+                        section_field.addClass("loader");
+                        editSection(section_id, section_name, is_template, template_id, section_field)
+                        
+                    }, timeout);
+            });
+    
+            $(".section-field").on("focusout", function(){
+                let section_field = $(this).text()
+                if(section_field == ""){
+                    $(this).html('&nbsp;');
+                }else{
+    
+                }
+            })
+    
+            $(".delete-section").on("click", function(){
+                let confirm_delete = confirm("This Template Section will be deleted permanently. Click OK to confirm.");
+                if (confirm_delete){
+                    let section_id = $(this).attr("data-id");
+                    let is_template = "true";
+                    let template_id = {{ template.id }};
+                    $.ajax({
+                        type: "get",
+                        url: "/ajax/delete/section",
+                        data: {
+                            section_id : section_id,
+                            is_template : is_template,
+                            template_id : template_id,
+                        },
+    
+                        success: function (response) {
+                            window.location.reload();
+                            console.log(response)    
+                        },
+                        error: function(response){
+                            console.log(response.responseText);
+                        }
+                    });                    
+                }
+            })
+    
+            $(".delete-area").on("click", function(){
+                let confirm_delete = confirm("This Area field and the entered data will be deleted permanently. Click OK to confirm.");
+                if (confirm_delete){
+                    let area_id = $(this).attr("data-id");
+                    let is_template = "true";
+                    let template_id = {{ template.id }};
+                    $.ajax({
+                        type: "get",
+                        url: "/ajax/delete/area",
+                        data: {
+                            area_id : area_id,
+                            is_template : is_template,
+                            template_id : template_id,
+                        },
+    
+                        success: function (response) {
+                            window.location.reload();
+                            console.log(response)    
+                        },
+                        error: function(response){
+                            console.log(response.responseText);
+                        }
+                    });                    
+                }
+            })
+            
         });
-
-        $(".area-field").on("focusout", function(){
-            let area_field = $(this).text()
-            if(area_field == ""){
-                $(this).html('&nbsp;');
-            }else{
-
-            }
-        })
-    });
-</script>
+    </script>
 
 {% endblock %}
