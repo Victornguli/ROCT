@@ -156,10 +156,20 @@ Edit Follow Up Mission
 <script src="{% static "core/js/bootstrap.min.js" %}"></script>
 <script src="{% static "core/js/datatables.min.js" %}"></script>
 <script src="{% static "core/data-tables/js/dataTables.bootstrap4.min.js" %}"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+
 
 <script>
     $(document).ready(function () {
         $('#{{ oversight.id }}').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+               'print', 'pdf'
+            ],
             "targets": 'no-sort',
             "bSort": false,
             "order": [],
