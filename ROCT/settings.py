@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "widget_tweaks",
     "import_export",
     "tempus_dominus",
+    "oidc_provider",
 ]
 
 MIDDLEWARE = [
@@ -127,3 +128,5 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "ROCT/core/static/core")
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+LOGIN_URL = '/accounts/login/'

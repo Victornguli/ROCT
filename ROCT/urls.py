@@ -14,8 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from core.views import filterTemplates, loadTemplate, editTemplate, defineTemplate, startOversight, ongoingOversight, editOversight, renderAreaForm, export, updateInline, filterFollowUp, submitOversight, editFollowUp
+from django.urls import path, include
+from core.views import filterTemplates, loadTemplate, editTemplate, defineTemplate, startOversight, \
+ongoingOversight, editOversight, renderAreaForm, export, updateInline, filterFollowUp, submitOversight, \
+editFollowUp
 from core import views
 
 urlpatterns = [
@@ -40,6 +42,7 @@ urlpatterns = [
     path('close/<int:oversight_id>',views.close_oversight ,name="close"),
     path('closed-oversights/',views.closed_oversights ,name="closed_oversights"),
     path('view-closed/<int:oversight_id>',views.view_closed_oversight ,name="view_closed"),
-    path('export/<int:oversight_id>',export ,name="export"),
+    path('export/<int:oversight_id>',export, name="export"),
+    path('openid/', include('oidc_provider.urls', namespace='oidc_provider')),
 
 ]
