@@ -1,4 +1,5 @@
 from django.db import models
+from django.auth.models import User
 
 
 class RO(models.Model):
@@ -139,7 +140,6 @@ class Oversight(models.Model):
 
 
     # Add User relationship
-    
     class Meta:
         verbose_name = "Oversight"
         ordering = ["updated_at"]
@@ -147,3 +147,19 @@ class Oversight(models.Model):
     def __str__(self):
         return self.oversight_name
     
+
+class TemplateCreator(models.Model):
+    template_creators = models.ManyToManyField(User, verbose_name="Template Creators")
+
+
+class MissionTeam(models.Model):
+    mission = models.ForeignKey(Oversight, on_delete=models.CASCADE)
+    mission_team = models.ManyToManyField(User, verbose_name = "Mission Team")
+
+
+class FollowupTeam(models.Model):
+    followup_team = models.ManyToManyField(User, verbose_name="Follow-up Team")
+
+
+class Adminstrator(models.Model):
+    adminstrators = models.ManyToManyField(User, verbose_name="Adminstrators")
