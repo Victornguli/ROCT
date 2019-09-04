@@ -3,6 +3,8 @@ from django.http import JsonResponse, HttpResponse
 from django.utils.encoding import smart_str
 from django.forms import formset_factory
 from django.db.models import Count, Max, Min
+from django.views.generic import View
+from django.template.loader import get_template
 
 import csv
 import datetime
@@ -12,8 +14,8 @@ from .resources import OversightResource
 from .models import Template, Area, TemplateArea, Section, TemplateSection, RO, CO, BU, Oversight
 from .filters import TemplateFilter, OversightFilter, ReportsFilter
 from .forms import AddAreaForm, AddSectionForm, AddTemplateForm, AddOversightForm, EditActiveAreaForm, EditFollowUpForm
-# Create your views here.
 
+from core.utils.render_to_pdf import render_to_pdf
 
 # def export(request, oversight_id):
 #     oversight_resource = OversightResource()
@@ -628,3 +630,34 @@ def deleteArea(request):
             oversight = Oversight.objects.filter(pk=oversight_id).update(updated_at=datetime.datetime.now())
             areas = Area.objects.filter(pk=area_id).delete()
             return HttpResponse("success")               
+
+
+class GeneratePDF(View):
+    """
+    Generates the a pdf version of a closed mission for download by a user
+    """
+    def get(self, request, *args, **kwargs):
+        template = get_template('pdf/view_closed.html')
+        oversight_id = request.GET.get("oversight", None)
+        # print (request.GET.get("oversight"))
+        oversight = Oversight.objects.get(pk=oversight_id)
+        sections = Section.objects.filter(oversight__id = oversight_id)
+        areas = Area.objects.filter(oversight__id=oversight_id)
+        context = {
+            "oversight":oversight,
+            "sections":sections,
+            "areas":areas,
+        }
+
+        html = template.render(context)
+        pdf = render_to_pdf('pdf/view_closed.html', context)
+        if pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            filename = "Invoice_%s.pdf" %("12341231")
+            content = "inline; filename='%s'" %(filename)
+            download = request.GET.get("download")
+            if download:
+                content = "attachment; filename='%s'" %(filename)
+            response['Content-Disposition'] = content
+            return response
+        return HttpResponse("Not found")

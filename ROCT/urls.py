@@ -44,5 +44,6 @@ urlpatterns = [
     path('view-closed/<int:oversight_id>',views.view_closed_oversight ,name="view_closed"),
     path('export/<int:oversight_id>',export, name="export"),
     path('openid/', include('oidc_provider.urls', namespace='oidc_provider')),
+    path('download/', views.GeneratePDF.as_view(), name="download_pdf"),
 
 ]
