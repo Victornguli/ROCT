@@ -173,7 +173,12 @@ Edit Follow Up Mission
         $('#{{ oversight.id }}').DataTable({
             dom: 'Bfrtip',
             buttons: [
-               'print', 'pdf'
+                'print',
+                {
+                'extend': 'pdf',
+                'orientation': 'landscape',
+                'pageSize': 'LETTER'
+            }
             ],
             "targets": 'no-sort',
             "bSort": false,
