@@ -177,7 +177,13 @@ Edit Follow Up Mission
                 {
                 'extend': 'pdf',
                 'orientation': 'landscape',
-                'pageSize': 'LETTER'
+                'pageSize': 'LETTER',
+                'messageTop': `
+                Mission Objectives: {{ oversight.objectives }}
+                Start Date: {{ oversight.start_date }}
+                End Date: {{ oversight.end_date }}
+                `,
+                'title': '{{ oversight.oversight_name }}',
             }
             ],
             "targets": 'no-sort',
