@@ -27,7 +27,7 @@ diff-match-patch==20181111
 Django==2.2.20
 django-crispy-forms==1.7.2
 django-filter==2.2.0
-django-filters==0.2.1
+django-filters>=2.4.0
 django-import-export==1.2.0
 django-tempus-dominus==5.1.2.5
 django-widget-tweaks==1.4.5
